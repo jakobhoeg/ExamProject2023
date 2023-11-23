@@ -68,6 +68,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 
+#region GET and POST endpoints
 app.MapPost("/register", async (User user, IUserRepository iUserRepository) =>
 {
     // This is used to validate the user object (typesafety). Example: if user.Email is not an email, it will return an error
@@ -137,4 +138,4 @@ app.MapGet("/check-login", async (HttpContext context) =>
 app.Run();
 
 
-
+#endregion
