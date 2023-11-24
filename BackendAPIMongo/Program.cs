@@ -71,7 +71,8 @@ app.UseAuthorization();
 #region GET and POST endpoints
 app.MapPost("/register", async (User user, IUserRepository iUserRepository) =>
 {
-    // This is used to validate the user object (typesafety). Example: if user.Email is not an email, it will return an error
+    // This is used to validate the user object (typesafety).
+    // Example: if user.Email is not an email, it will return an error
     var validationContext = new ValidationContext(user, serviceProvider: null, items: null);
     var validationResults = new List<ValidationResult>();
     var isValid = Validator.TryValidateObject(user, validationContext, validationResults, true);

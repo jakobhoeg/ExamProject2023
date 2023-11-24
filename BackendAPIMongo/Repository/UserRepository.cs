@@ -54,7 +54,7 @@ namespace BackendAPIMongo.Repository
             }
 
             // Add default role
-            user.Role = "user";
+            user.Role = "User";
 
             // Encrypt password using BCrypt
             user.Password = BCrypt.Net.BCrypt.HashPassword(user.Password);
