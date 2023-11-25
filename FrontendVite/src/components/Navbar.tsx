@@ -23,7 +23,7 @@ export default function Navbar() {
         }
       }/>
         {pageLinks.map((link) => (
-          <div className='flex gap-4 '>
+          <div key={link.name} className='flex gap-4 '>
             <Link key={link.name} to={link.path} className='flex items-center gap-2'>
             {link.imgUrl && <img src={link.imgUrl} alt="heart" className='w-4 h-4 ' />}
             {link.name}
