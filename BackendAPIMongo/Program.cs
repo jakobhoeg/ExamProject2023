@@ -133,5 +133,31 @@ app.MapGet("/check-login", async (HttpContext context) =>
 }).RequireAuthorization("user");
 #endregion
 
+// Get User object of logged in user (for profile page)
+app.MapGet("/user", async (IUserRepository iUserRepository, HttpContext context) =>
+{
+    if (context.User.Identity.IsAuthenticated)
+    {
+        var email = context.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
+        var user = await iUserRepository.GetUser(new User { Email = email });
+        return Results.Ok(
+            new
+            {
+                user.Id,
+                user.Email,
+                user.FirstName,
+                user.Role
+            });
+    }
+    else
+    {
+        return Results.Unauthorized();
+    }
+
+}).RequireAuthorization("user");
+
 
 app.Run();
+
+
+

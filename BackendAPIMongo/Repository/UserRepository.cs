@@ -9,6 +9,9 @@ namespace BackendAPIMongo.Repository
     {
         public Task<bool> Authenticate(User user);
         public Task Register(User user);
+
+        public Task<User> GetUser(User user);
+
     }
 
     public class UserRepository : IUserRepository
@@ -62,6 +65,21 @@ namespace BackendAPIMongo.Repository
             _users.InsertOne(user);
             return Task.FromResult(true);
         }
+
+        // Get user of logged in user
+        public Task<User> GetUser(User user)
+        {
+            var userExists = _users.Find(u => u.Email == user.Email).FirstOrDefault();
+
+            if (userExists == null)
+            {
+                throw new Exception(user.Email + " does not exist");
+            }
+
+            return Task.FromResult(userExists);
+        }
+
+
 
     }
 }
