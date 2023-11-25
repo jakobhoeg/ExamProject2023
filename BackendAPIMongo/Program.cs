@@ -9,8 +9,6 @@ using System.Xml.Linq;
 var builder = WebApplication.CreateBuilder(args);
 var allowedOrigins = "http://localhost:5173";
 
-// Add services to the container.
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
@@ -47,8 +45,6 @@ options.AddPolicy(name: allowedOrigins,
 });
 
 
-
-
 builder.Services.AddSingleton<IUserRepository, UserRepository>();
 builder.Services.Configure<MongoDBRestSettings>(builder.Configuration.GetSection(nameof(MongoDBRestSettings)));
 
@@ -68,7 +64,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 
-#region GET and POST endpoints
+#region Authentication endpoints
 app.MapPost("/register", async (User user, IUserRepository iUserRepository) =>
 {
     // This is used to validate the user object (typesafety).
@@ -103,6 +99,7 @@ app.MapPost("/login", async (User user, IUserRepository iUserRepository, HttpCon
     {
         var claims = new List<Claim>
         {
+            new Claim(ClaimTypes.Email, user.Email),
             new Claim("role", "user")
         };
         var identity = new ClaimsIdentity(claims, AuthScheme);
@@ -134,9 +131,7 @@ app.MapGet("/check-login", async (HttpContext context) =>
         return Results.Unauthorized();
     }
 }).RequireAuthorization("user");
+#endregion
 
 
 app.Run();
-
-
-#endregion

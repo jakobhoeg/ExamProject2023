@@ -9,7 +9,6 @@ namespace BackendAPIMongo.Repository
     {
         public Task<bool> Authenticate(User user);
         public Task Register(User user);
-
     }
 
     public class UserRepository : IUserRepository
@@ -63,8 +62,6 @@ namespace BackendAPIMongo.Repository
             _users.InsertOne(user);
             return Task.FromResult(true);
         }
-
-
 
     }
 }
