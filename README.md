@@ -11,7 +11,6 @@ docker-compose up -d
 - Go to http://localhost:5173
 
 For now its just a simple login + register that calls the backend.
-
-Also just made the navbar from Sri's figma.
+Also created the navigation bar.
 
 ![image](https://github.com/jakobhoeg/ExamProject2023/assets/114422072/04161113-bf14-453c-b2ca-207c42e47490)
