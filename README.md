@@ -2,6 +2,7 @@
 
 ## Start backend
 To run the backend on docker open the ExamProject folder in CMD and type:
+
 docker-compose up -d
 
 ## Now start the frontend development server
