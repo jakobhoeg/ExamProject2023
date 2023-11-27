@@ -1,0 +1,34 @@
+[
+  {
+    "Email": "jakobfsd@hotmail.dk",
+    "Password": "$2a$11$jcD9BqBkY9zQTJ5/t.69Hu./Enju0hLH3QthjkwjTtc6Y5wculgmC",
+    "FirstName": "Jakob",
+    "IsAdmin": "True",
+    "Partner": null,
+    "LikedBabyNames": []
+  },
+  {
+    "Email": "mail@varsan.dk",
+    "Password": "$2a$11$jcD9BqBkY9zQTJ5/t.69Hu./Enju0hLH3QthjkwjTtc6Y5wculgmC",
+    "FirstName": "Srivarsan",
+    "IsAdmin": "True",
+    "Partner": null,
+    "LikedBabyNames": []
+  },
+  {
+    "Email": "larspredel@gmail.com",
+    "Password": "$2a$11$jcD9BqBkY9zQTJ5/t.69Hu./Enju0hLH3QthjkwjTtc6Y5wculgmC",
+    "FirstName": "Lars",
+    "IsAdmin": "True",
+    "Partner": null,
+    "LikedBabyNames": []
+  },
+  {
+    "Email": "sune.eskildsen@gmail.com",
+    "Password": "$2a$11$jcD9BqBkY9zQTJ5/t.69Hu./Enju0hLH3QthjkwjTtc6Y5wculgmC",
+    "FirstName": "Sune",
+    "IsAdmin": "True",
+    "Partner": null,
+    "LikedBabyNames": []
+  }
+]

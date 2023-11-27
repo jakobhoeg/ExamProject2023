@@ -1,11 +1,13 @@
-﻿using MongoDB.Bson.Serialization.Attributes;
+﻿using MongoDB.Bson;
+using MongoDB.Bson.Serialization.Attributes;
 
 namespace BackendAPIMongo.Model
 {
     public class MatchedNames
     {
         [BsonId]
-        public Guid Id { get; set; }
+        [BsonRepresentation(BsonType.ObjectId)]
+        public string Id { get; set; }
         public List<User> Users { get; set; }
         public List<BabyName> LikedBabyNames { get; set; }
         public MatchedNames()

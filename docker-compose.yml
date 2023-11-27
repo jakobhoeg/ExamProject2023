@@ -18,5 +18,10 @@ services:
     depends_on:
       - mongohost
 
+  names-and-users:
+    build: ./InitialData_MongoDB
+    depends_on:
+      - mongohost
+
 volumes:
   mongo:
