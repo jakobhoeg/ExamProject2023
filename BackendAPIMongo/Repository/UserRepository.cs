@@ -55,9 +55,6 @@ namespace BackendAPIMongo.Repository
                 throw new Exception("User already exists");
             }
 
-            // Add default role
-            user.Role = "User";
-
             // Encrypt password using BCrypt
             user.Password = BCrypt.Net.BCrypt.HashPassword(user.Password);
 

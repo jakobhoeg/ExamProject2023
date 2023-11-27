@@ -18,6 +18,18 @@ namespace BackendAPIMongo.Model
         [Required(ErrorMessage = "FirstName is required")]
         public string FirstName { get; set; } = null!;
 
-        public string? Role { get; set; }
+        public bool IsAdmin { get; set; }
+
+        public User Partner { get; set; } = null!;
+
+        public List<BabyName> LikedBabyNames { get; set; }
+
+        public User()
+        {
+            LikedBabyNames = new List<BabyName>();
+            IsAdmin = false;
+        }
+
+
     }
 }
