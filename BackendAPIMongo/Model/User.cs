@@ -20,7 +20,7 @@ namespace BackendAPIMongo.Model
 
         public bool IsAdmin { get; set; }
 
-        public User Partner { get; set; } = null!;
+        public User? Partner { get; set; } = null!;
 
         public List<BabyName> LikedBabyNames { get; set; }
 
