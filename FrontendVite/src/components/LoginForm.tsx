@@ -67,7 +67,7 @@ const LoginForm: React.FC = () => {
           />
         </div>
         {isLoading ? (
-          <button className=" border-button w-full opacity-50">
+          <button className="flex border-button justify-center w-full opacity-50">
             <Loader2 className="animate-spin h-4 w-4" />
           </button>
         ) : (

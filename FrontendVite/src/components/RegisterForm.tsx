@@ -91,7 +91,7 @@ const RegisterForm: React.FC = () => {
         </div>
         <div className="pt-5">
           {isLoading ? (
-            <button className="border-button w-full opacity-50">
+            <button className="flex justify-center border-button w-full opacity-50">
               <Loader2 className="animate-spin h-4 w-4" />
             </button>
           ) : (
