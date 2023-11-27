@@ -1,3 +1,4 @@
+import "../App.css";
 
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthProvider';
@@ -15,8 +16,8 @@ export default function Navbar() {
       ]
 
   return (
-    <nav className='absolute top-0 w-full flex items-center justify-between border-b py-6 px-28'>
-      <div className=' uppercase text-sm flex items-center'>
+    <nav className='absolute top-0 w-full flex items-center justify-between border-b py-6 md:px-8 lg:px-28'>
+      <div className='uppercase text-sm flex items-center'>
       <img src={logo} alt="logo" className='pr-10 cursor-pointer' onClick={
         () => {
           window.location.href = '/'
@@ -36,21 +37,21 @@ export default function Navbar() {
                 <Link to='/profile'>
                 Min profil
               </Link>
-                <button onClick={signOut} className='border border-orange-300 py-2 px-4 font-medium text-sm'>
+                <button onClick={signOut} className='border-button'>
                 Log ud
               </button>
               </div>
             ) : (
               <div className='flex '>
-                <Link to='/sign-in' className='border border-orange-300 py-2 px-4 font-medium text-sm'>
+                <Link to='/sign-in' className='border-button'>
                 Log ind
               </Link>
               </div>
             )}
       </div>
-      <div className='space-x-2 items-center'>
+      <div className='space-x-2 items-center hidden lg:flex'>
         <input type="text" placeholder="Søg navn" className='border py-2 px-4'/>
-        <button className='border border-orange-300 py-2 px-4'>Søg</button>
+        <button className='border-button'>Søg</button>
       </div>
     </nav>
   )

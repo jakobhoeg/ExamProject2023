@@ -53,7 +53,7 @@ const LoginForm: React.FC = () => {
             name="email"
             value={formData.email}
             onChange={handleChange}
-            className="py-1 px-3 bg-slate-100 "
+            className="inputs "
           />
         </div>
         <div className="flex flex-col gap-2 pb-5">
@@ -63,18 +63,18 @@ const LoginForm: React.FC = () => {
             name="password"
             value={formData.password}
             onChange={handleChange}
-            className="py-1 px-3 bg-slate-100 "
+            className="inputs "
           />
         </div>
         {isLoading ? (
-          <button className=" border border-orange-300 py-3 px-4 flex justify-center font-medium w-full opacity-50">
+          <button className=" border-button w-full opacity-50">
             <Loader2 className="animate-spin h-4 w-4" />
           </button>
         ) : (
           <button
             disabled={isLoading}
             type="submit"
-            className=" border border-orange-300 py-2 px-4 font-medium w-full disabled:opacity-50"
+            className="border-button w-full disabled:opacity-50"
           >
             Log ind
           </button>
