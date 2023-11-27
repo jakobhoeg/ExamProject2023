@@ -156,6 +156,7 @@ app.MapGet("/user", async (IUserRepository iUserRepository, HttpContext context)
 
 }).RequireAuthorization("user");
 
+
 app.Run();
 
 
