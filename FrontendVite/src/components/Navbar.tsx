@@ -10,7 +10,6 @@ export default function Navbar() {
     const { isLoggedIn, signOut } = useAuth();
 
     const pageLinks = [
-        { name: 'Find Navn', path: '/find-navn' },
         { name: 'Alle Navne', path: '/navne' },
         { name: 'Vores Matches', path: '/', imgUrl: '/heart.svg'},
       ]

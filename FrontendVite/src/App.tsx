@@ -4,7 +4,6 @@ import Register from "./components/RegisterForm";
 import { Toaster } from "sonner";
 import Login from "./components/LoginForm";
 import Navbar from "./components/Navbar";
-import FindName from "./components/pages/FindName";
 import SignIn from "./components/pages/SignIn";
 import Profile from "./components/pages/Profile";
 import Names from "./components/pages/Names";
@@ -20,9 +19,6 @@ function App() {
         </Route>
         <Route path="/login">
           <Login />
-        </Route>
-        <Route path="/find-navn">
-          <FindName />
         </Route>
         <Route path="/sign-in">
           <SignIn />
