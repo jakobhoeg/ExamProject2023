@@ -46,6 +46,7 @@ options.AddPolicy(name: allowedOrigins,
 
 
 builder.Services.AddSingleton<IUserRepository, UserRepository>();
+builder.Services.AddSingleton<IBabyNameRepository, BabyNameRepository>();
 builder.Services.Configure<MongoDBRestSettings>(builder.Configuration.GetSection(nameof(MongoDBRestSettings)));
 
 var app = builder.Build();
@@ -156,7 +157,19 @@ app.MapGet("/user", async (IUserRepository iUserRepository, HttpContext context)
 
 }).RequireAuthorization("user");
 
+
+#region BabyName endpoints
+
+
+app.MapGet("/babynames/{page}", async (int page, IBabyNameRepository iBabyNameRepository) =>
+{
+    var babyNamesList = await iBabyNameRepository.GetBabyNames(page);
+
+    return Results.Ok(babyNamesList);
+
+}).AllowAnonymous();
+
+#endregion
+
+
 app.Run();
-
-
-
