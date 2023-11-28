@@ -62,11 +62,15 @@ export default function Names() {
             babyNames.map((babyName) => (
               <div
                 key={babyName.id}
-                className="flex items-center w-full justify-between"
-              >
+                className="flex items-center w-full justify-between">
                 <p className="mr-2">{babyName.name}</p>
                 <div className="flex items-center">
-                  <HeartIcon className="h-4 w-4 mr-1"/>
+                  <button className="border-button">
+                    <div className="flex items-center">
+                      <HeartIcon className="h-5 w-4 mr-1" />
+                      <p className="mr-1">Like</p>
+                    </div>
+                  </button>
                   <p>{babyName.amountOfLikes}</p>
                 </div>
               </div>
