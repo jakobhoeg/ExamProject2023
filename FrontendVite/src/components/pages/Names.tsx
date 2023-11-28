@@ -56,13 +56,13 @@ export default function Names() {
 
   return (
      <div className="flex flex-col w-screen pt-40 pb-20 justify-center items-center">
-        <div className="flex flex-col justify-center items-center">
+        <div className="flex flex-col justify-center items-center gap-8">
         <h1 className="text-5xl">
             Alle navne
         </h1>
-        <div className="flex flex-col items-center justify-center" >
+        <div className="flex flex-col items-center justify-center w-96 gap-4" >
         {babyNames && babyNames.map(babyName => 
-            <div key={babyName.id} className="flex items-center ">
+            <div key={babyName.id} className="flex items-center w-full justify-between ">
                 <p className="mr-2">{babyName.name}</p>
                 <div className="flex items-center">
                 <HeartIcon className="h-4 w-4 mr-1"/>
@@ -70,6 +70,7 @@ export default function Names() {
             </div>
             </div>
         )}
+        </div>
         
         <div className="flex justify-between w-full gap-10 items-center">
         <button className="border-button"
@@ -89,7 +90,7 @@ export default function Names() {
             }}
             >Næste</button>
         </div>
-        </div>
+        
         </div>
     </div>
   )
