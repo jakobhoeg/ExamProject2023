@@ -3,6 +3,7 @@ using BackendAPIMongo.Model;
 using BackendAPIMongo.Repository;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using System.ComponentModel.DataAnnotations;
 using System.Security.Claims;
 using System.Xml.Linq;
@@ -156,6 +157,34 @@ app.MapGet("/user", async (IUserRepository iUserRepository, HttpContext context)
         return Results.Unauthorized();
     }
 
+}).RequireAuthorization("user");
+
+
+app.MapPost("/add-partner", async (IUserRepository iUserRepository, HttpContext context) =>
+{
+    if (context.User.Identity.IsAuthenticated)
+    {
+        var userEmail = context.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
+
+        // Read the request body and deserialize it into UserRequest
+        using (var reader = new StreamReader(context.Request.Body))
+        {
+            var requestBody = await reader.ReadToEndAsync();
+            var userRequest = JsonConvert.DeserializeObject<UserRequest>(requestBody);
+
+            if (userRequest == null || string.IsNullOrEmpty(userRequest.Email))
+            {
+                return Results.BadRequest("Invalid or missing email in the request body.");
+            }
+
+            var user = await iUserRepository.GetUser(new User { Email = userEmail });
+            await iUserRepository.AddPartner(user, userRequest.Email);
+
+            return Results.Ok("Partner added successfully");
+        }
+    }
+
+    return Results.Unauthorized();
 }).RequireAuthorization("user");
 
 

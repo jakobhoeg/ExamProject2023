@@ -1,6 +1,7 @@
 ﻿using BackendAPIMongo.Model;
 using Microsoft.Extensions.Options;
 using MongoDB.Driver;
+using System.Diagnostics;
 
 namespace BackendAPIMongo.Repository
 {
@@ -11,6 +12,8 @@ namespace BackendAPIMongo.Repository
         public Task Register(User user);
 
         public Task<User> GetUser(User user);
+
+        public Task AddPartner(User user, string partnerEmail);
 
     }
 
@@ -76,7 +79,32 @@ namespace BackendAPIMongo.Repository
             return Task.FromResult(userExists);
         }
 
+        public Task AddPartner(User user, string partnerEmail)
+        {
+            var partner = _users.Find(u => u.Email == partnerEmail).FirstOrDefault();
 
+            if (partner == null)
+            {
+                throw new Exception(partnerEmail + " does not exist");
+            }
 
+            if (user.Partner != null)
+            {
+                throw new Exception("User already has a partner");
+            }
+
+            try
+            {
+                _users.UpdateOne(u => u.Email == user.Email, Builders<User>.Update.Set(u => u.Partner, partner));
+                _users.UpdateOne(u => u.Email == partnerEmail, Builders<User>.Update.Set(u => u.Partner, user));
+            }
+            catch (Exception e)
+            {
+                throw new Exception(e.Message);
+            }
+
+            return Task.FromResult(true);
+
+        }
     }
 }
