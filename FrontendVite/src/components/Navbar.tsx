@@ -11,7 +11,7 @@ export default function Navbar() {
 
     const pageLinks = [
         { name: 'Find Navn', path: '/find-navn' },
-        { name: 'Topliste', path: '/' },
+        { name: 'Alle Navne', path: '/navne' },
         { name: 'Vores Matches', path: '/', imgUrl: '/heart.svg'},
       ]
 

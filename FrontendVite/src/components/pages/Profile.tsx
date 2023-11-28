@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useAuth } from "../../context/AuthProvider";
 
 interface User {
-  id: number;
+  id: string;
   firstName: string;
   email: string;
   role: string;

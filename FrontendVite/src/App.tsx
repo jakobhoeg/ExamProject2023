@@ -7,10 +7,11 @@ import Navbar from "./components/Navbar";
 import FindName from "./components/pages/FindName";
 import SignIn from "./components/pages/SignIn";
 import Profile from "./components/pages/Profile";
+import Names from "./components/pages/Names";
 
 function App() {
   return (
-    <div className="flex flex-col h-screen w-screen justify-center items-center">
+    <div className="flex flex-col w-screen justify-center items-center">
       <Toaster position="bottom-center" />
       <Navbar />
       <Switch>
@@ -28,6 +29,9 @@ function App() {
         </Route>
         <Route path="/profile">
           <Profile />
+        </Route>
+        <Route path="/navne">
+          <Names />
         </Route>
       </Switch>
     </div>

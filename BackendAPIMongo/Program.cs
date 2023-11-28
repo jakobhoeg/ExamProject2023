@@ -2,6 +2,7 @@ using BackendAPIMongo;
 using BackendAPIMongo.Model;
 using BackendAPIMongo.Repository;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;
 using System.Security.Claims;
 using System.Xml.Linq;
@@ -161,12 +162,11 @@ app.MapGet("/user", async (IUserRepository iUserRepository, HttpContext context)
 #region BabyName endpoints
 
 
-app.MapGet("/babynames/{page}", async (int page, IBabyNameRepository iBabyNameRepository) =>
+app.MapGet("/babynames", async ([FromQuery] int page, IBabyNameRepository iBabyNameRepository) =>
 {
     var babyNamesList = await iBabyNameRepository.GetBabyNames(page);
 
     return Results.Ok(babyNamesList);
-
 }).AllowAnonymous();
 
 #endregion
