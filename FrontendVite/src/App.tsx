@@ -7,6 +7,7 @@ import Navbar from "./components/Navbar";
 import SignIn from "./components/pages/SignIn";
 import Profile from "./components/pages/Profile";
 import Names from "./components/pages/Names";
+import AddPartner from "./components/pages/AddPartner";
 
 function App() {
   return (
@@ -28,6 +29,9 @@ function App() {
         </Route>
         <Route path="/navne">
           <Names />
+        </Route>
+        <Route path="/tilknyt-partner">
+          <AddPartner />
         </Route>
       </Switch>
     </div>

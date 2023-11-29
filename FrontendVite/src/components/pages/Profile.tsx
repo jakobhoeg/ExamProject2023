@@ -5,7 +5,7 @@ interface User {
   id: string;
   firstName: string;
   email: string;
-  role: string;
+  partner: User | null;
 }
 
 export default function Profile() {
@@ -46,10 +46,16 @@ export default function Profile() {
   return (
     <div>
       {user && (
-        <div className="flex flex-col w-screen items-center h-screen pt-40">
+        <div className="flex flex-col w-screen text-start items-center h-screen pt-40">
           <h1>Din profil</h1>
           <p>Velkommen, {user.firstName}</p>
           <p>Email: {user.email}</p>
+          {user.partner && (
+            <div className="flex flex-col items-center">
+              <p className="">Din partner: {user.partner.firstName}</p>
+              <p className="">Din partners email: {user.partner.email}</p>
+            </div>
+          )}
         </div>
       )}
     </div>

@@ -150,6 +150,7 @@ app.MapGet("/user", async (IUserRepository iUserRepository, HttpContext context)
                 user.Email,
                 user.FirstName,
                 user.IsAdmin,
+                user.Partner,
             });
     }
     else

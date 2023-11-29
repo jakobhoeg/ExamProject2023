@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import "../../App.css";
-import { HeartIcon } from "@radix-ui/react-icons";
+import { HeartFilledIcon } from "@radix-ui/react-icons";
 
 interface BabyName {
   id: string;
@@ -64,15 +64,13 @@ export default function Names() {
                 key={babyName.id}
                 className="flex items-center w-full justify-between">
                 <p className="mr-2">{babyName.name}</p>
-                <div className="flex items-center">
-                  <button className="border-button">
+                  
                     <div className="flex items-center">
-                      <HeartIcon className="h-5 w-4 mr-1" />
-                      <p className="mr-1">Like</p>
+                      <HeartFilledIcon className="h-4 w-4 mr-1 text-rose-500 hover:text-rose-400 hover:cursor-pointer" />
+                      <p className="mr-1">{babyName.amountOfLikes} Likes</p>
                     </div>
-                  </button>
-                  <p>{babyName.amountOfLikes}</p>
-                </div>
+                 
+                  
               </div>
             ))}
         </div>

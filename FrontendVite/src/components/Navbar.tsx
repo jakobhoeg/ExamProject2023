@@ -22,7 +22,7 @@ export default function Navbar() {
           window.location.href = '/'
         }
       }/>
-        {pageLinks.map((link) => (
+        {pageLinks.map(link => (
           <div key={link.name} className='flex gap-4 '>
             <Link key={link.name} to={link.path} className='flex items-center gap-2'>
             {link.imgUrl && <img src={link.imgUrl} alt="heart" className='w-4 h-4 ' />}
@@ -38,6 +38,13 @@ export default function Navbar() {
               </Link>
                 <button onClick={signOut} className='border-button'>
                 Log ud
+              </button>
+              <button onClick={
+                () => {
+                  window.location.href = '/tilknyt-partner'
+                }
+              } className='border-button'>
+                Tilknyt partner
               </button>
               </div>
             ) : (
