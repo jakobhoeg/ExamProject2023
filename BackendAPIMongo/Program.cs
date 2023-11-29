@@ -191,7 +191,6 @@ app.MapPost("/add-partner", async (IUserRepository iUserRepository, HttpContext 
 
 #region BabyName endpoints
 
-
 app.MapGet("/babynames", async ([FromQuery] int page, IBabyNameRepository iBabyNameRepository) =>
 {
     var babyNamesList = await iBabyNameRepository.GetBabyNames(page);
