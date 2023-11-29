@@ -8,6 +8,7 @@ namespace BackendAPIMongo.Repository
     public interface IBabyNameRepository
     {
         public Task<List<BabyName>> GetBabyNames(int pageIndex);
+        public Task<List<BabyName>> GetBabyNames(int pageIndex, bool isMale, bool isFemale, bool isInternational);
     }
 
     public class BabyNameRepository : IBabyNameRepository
@@ -43,5 +44,30 @@ namespace BackendAPIMongo.Repository
             return Task.FromResult(babyNamesList);
         }
 
+
+        /// <summary>
+        /// Returns the right names based on gender and internationality and uses pagination.
+        /// </summary>
+        /// <param name="pageIndex"></param>
+        /// <param name="isMale"></param>
+        /// <param name="isFemale"></param>
+        /// <param name="isInternational"></param>
+        /// <returns></returns>
+        public Task<List<BabyName>> GetBabyNames(int pageIndex, bool isMale, bool isFemale, bool isInternational)
+        {
+            var skipCount = (pageIndex - 1) * pageSize;
+
+            var filterBuilder = Builders<BabyName>.Filter;
+            var filter = filterBuilder.Eq(b => b.IsMale, isMale) 
+                & filterBuilder.Eq(b => b.IsFemale, isFemale) 
+                & filterBuilder.Eq(b => b.IsInternational, isInternational);
+
+            var babyNamesList = _babyNames.Find(filter)
+                                           .Skip(skipCount)
+                                           .Limit(pageSize)
+                                           .ToList();
+
+            return Task.FromResult(babyNamesList);
+        }
     }
 }

@@ -31,7 +31,5 @@ namespace BackendAPIMongo.Model
             LikedBabyNames = new List<BabyName>();
             IsAdmin = false;
         }
-
-
     }
 }

@@ -7,6 +7,7 @@ using Newtonsoft.Json;
 using System.ComponentModel.DataAnnotations;
 using System.Security.Claims;
 using System.Xml.Linq;
+using static System.Net.Mime.MediaTypeNames;
 
 var builder = WebApplication.CreateBuilder(args);
 var allowedOrigins = "http://localhost:5173";
@@ -226,10 +227,18 @@ app.MapDelete("/remove-partner", async (IUserRepository iUserRepository, HttpCon
 
 #region BabyName endpoints
 
-
 app.MapGet("/babynames", async ([FromQuery] int page, IBabyNameRepository iBabyNameRepository) =>
 {
     var babyNamesList = await iBabyNameRepository.GetBabyNames(page);
+
+    return Results.Ok(babyNamesList);
+}).AllowAnonymous();
+
+
+
+app.MapGet("/babynames/filter/", async([FromQuery] int page, [FromQuery] bool isMale, [FromQuery] bool isFemale, [FromQuery] bool isInternational, IBabyNameRepository iBabyNameRepository) =>
+{
+    var babyNamesList = await iBabyNameRepository.GetBabyNames(page, isMale, isFemale, isInternational);
 
     return Results.Ok(babyNamesList);
 }).AllowAnonymous();
