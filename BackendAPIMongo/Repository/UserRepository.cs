@@ -5,16 +5,12 @@ using System.Diagnostics;
 
 namespace BackendAPIMongo.Repository
 {
-
     public interface IUserRepository
     {
         public Task<bool> Authenticate(User user);
         public Task Register(User user);
-
         public Task<User> GetUser(User user);
-
         public Task AddPartner(User user, string partnerEmail);
-
     }
 
     public class UserRepository : IUserRepository
@@ -47,7 +43,6 @@ namespace BackendAPIMongo.Repository
             }
 
             return Task.FromResult(true);
-
         }
 
         // Register user (not admin)
@@ -104,7 +99,6 @@ namespace BackendAPIMongo.Repository
             }
 
             return Task.FromResult(true);
-
         }
     }
 }
