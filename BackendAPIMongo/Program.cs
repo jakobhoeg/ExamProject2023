@@ -199,7 +199,7 @@ app.MapGet("/babynames", async ([FromQuery] int page, IBabyNameRepository iBabyN
 }).AllowAnonymous();
 
 
-app.MapGet("/babynames/{page}", async ([FromRoute] int page, [FromQuery] bool isMale, [FromQuery] bool isFemale, [FromQuery] bool isInternational, IBabyNameRepository iBabyNameRepository) =>
+app.MapGet("/babynames/filter", async ([FromQuery] int page, [FromQuery] bool isMale, [FromQuery] bool isFemale, [FromQuery] bool isInternational, IBabyNameRepository iBabyNameRepository) =>
 {
     var babyNamesList = await iBabyNameRepository.GetBabyNames(page, isMale, isFemale, isInternational);
 
