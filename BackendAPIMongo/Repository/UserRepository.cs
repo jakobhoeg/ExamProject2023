@@ -1,5 +1,6 @@
 ﻿using BackendAPIMongo.Model;
 using Microsoft.Extensions.Options;
+using MongoDB.Bson;
 using MongoDB.Driver;
 using System.Diagnostics;
 
@@ -17,6 +18,7 @@ namespace BackendAPIMongo.Repository
 
         public Task RemovePartner(User user, string partnerEmail);
 
+        public Task<long> GetUserCount();
     }
 
     public class UserRepository : IUserRepository
@@ -167,5 +169,24 @@ namespace BackendAPIMongo.Repository
 
             return Task.FromResult(true);
         }
+
+        // Get the number of registered users in the database
+        public Task<long> GetUserCount()
+        {
+            long count = 0;
+
+            try
+            {
+                count = _users.CountDocuments(new BsonDocument());
+            }
+            catch (Exception e)
+            {
+                Debug.WriteLine(e.Message);
+            }
+
+            return Task.FromResult(count);
+        }
+
+
     }
 }
