@@ -1,22 +1,18 @@
 ﻿using BackendAPIMongo.Model;
 using Microsoft.Extensions.Options;
+using MongoDB.Bson;
 using MongoDB.Driver;
 using System.Diagnostics;
 
 namespace BackendAPIMongo.Repository
 {
-
     public interface IUserRepository
     {
         public Task<bool> Authenticate(User user);
         public Task Register(User user);
-
         public Task<User> GetUser(User user);
-
         public Task AddPartner(User user, string partnerEmail);
-
-        public Task RemovePartner(User user, string partnerEmail);
-
+        public Task<long> GetUserCount();
     }
 
     public class UserRepository : IUserRepository
@@ -49,7 +45,6 @@ namespace BackendAPIMongo.Repository
             }
 
             return Task.FromResult(true);
-
         }
 
         // Register user (not admin)
@@ -90,7 +85,7 @@ namespace BackendAPIMongo.Repository
                 throw new Exception(partnerEmail + " does not exist");
             }
 
-            if (user.Partner != null || partner.Partner != null)
+            if (user.Partner != null)
             {
                 throw new Exception("User already has a partner");
             }
@@ -106,35 +101,23 @@ namespace BackendAPIMongo.Repository
             }
 
             return Task.FromResult(true);
-
         }
 
-        public Task RemovePartner(User user, string partnerEmail)
+        // Get the number of registered users in the database
+        public Task<long> GetUserCount()
         {
-            var partner = _users.Find(u => u.Email == partnerEmail).FirstOrDefault();
-
-            if (partner == null)
-            {
-                throw new Exception(partnerEmail + " does not exist");
-            }
-
-            if (user.Partner == null || partner.Partner == null)
-            {
-                throw new Exception("User does not have a partner");
-            }
+            long count = 0;
 
             try
             {
-                _users.UpdateOne(u => u.Email == user.Email, Builders<User>.Update.Set(u => u.Partner, null));
-                _users.UpdateOne(u => u.Email == partnerEmail, Builders<User>.Update.Set(u => u.Partner, null));
-                
+                count = _users.CountDocuments(new BsonDocument());
             }
             catch (Exception e)
             {
-                throw new Exception(e.Message);
+                Debug.WriteLine(e.Message);
             }
 
-            return Task.FromResult(true);
+            return Task.FromResult(count);
         }
     }
 }
