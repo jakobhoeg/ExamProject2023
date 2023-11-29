@@ -199,9 +199,9 @@ app.MapGet("/babynames", async ([FromQuery] int page, IBabyNameRepository iBabyN
 }).AllowAnonymous();
 
 
-app.MapGet("/babynames/{page}", async ([FromRoute] int page, [FromQuery] bool isMale, [FromQuery] bool isFemale, IBabyNameRepository iBabyNameRepository) =>
+app.MapGet("/babynames/{page}", async ([FromRoute] int page, [FromQuery] bool isMale, [FromQuery] bool isFemale, [FromQuery] bool isInternational, IBabyNameRepository iBabyNameRepository) =>
 {
-    var babyNamesList = await iBabyNameRepository.GetBabyNames(page, isMale, isFemale);
+    var babyNamesList = await iBabyNameRepository.GetBabyNames(page, isMale, isFemale, isInternational);
 
     return Results.Ok(babyNamesList);
 }).AllowAnonymous();
@@ -224,5 +224,33 @@ app.MapGet("/statistics/user-count", async (IUserRepository iUserRepository, Htt
 
 }).RequireAuthorization("user", "admin");
 #endregion
+
+
+app.MapDelete("/remove-partner", async (IUserRepository iUserRepository, HttpContext context) =>
+{
+    if (context.User.Identity.IsAuthenticated)
+    {
+        var userEmail = context.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
+
+        // Read the request body and deserialize it into UserRequest
+        using (var reader = new StreamReader(context.Request.Body))
+        {
+            var requestBody = await reader.ReadToEndAsync();
+            var userRequest = JsonConvert.DeserializeObject<UserRequest>(requestBody);
+
+            if (userRequest == null || string.IsNullOrEmpty(userRequest.Email))
+            {
+                return Results.BadRequest("Invalid or missing email in the request body.");
+            }
+
+            var user = await iUserRepository.GetUser(new User { Email = userEmail });
+            await iUserRepository.RemovePartner(user, userRequest.Email);
+
+            return Results.Ok("Partner removed successfully");
+        }
+    }
+
+    return Results.Unauthorized();
+}).RequireAuthorization("user");
 
 app.Run();
