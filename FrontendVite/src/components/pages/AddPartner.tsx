@@ -15,7 +15,7 @@ export default function AddPartner() {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleLogin = async (e: FormEvent<HTMLFormElement>) => {
+  const handleAddPartner = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     try {
@@ -29,20 +29,20 @@ export default function AddPartner() {
       });
 
       if (response.ok) {
-        toast.success("Successfully added partner!");
+        toast.success("Din parter blev tilføjet!");
       } else {
-        throw new Error("You can't add this partner");
+        throw new Error("Du kan ikke tilføje denne partner");
       }
     } catch (error) {
-      console.error("Login failed:", error);
-      toast.error("Something went wrong!");
+      console.error(error);
+      toast.error("Der gik noget galt.");
     }
   };
 
   return (
     <div className="flex flex-col gap-4 w-96 border border-orange-300 p-8 shadow-lg">
       <h1>Tilknyt partner</h1>
-      <form onSubmit={handleLogin} className="space-y-4" >
+      <form onSubmit={handleAddPartner} className="space-y-4" >
         <input
           type="email"
           name="email"
