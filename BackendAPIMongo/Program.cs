@@ -199,6 +199,14 @@ app.MapGet("/babynames", async ([FromQuery] int page, IBabyNameRepository iBabyN
     return Results.Ok(babyNamesList);
 }).AllowAnonymous();
 
+
+app.MapGet("/babynames/{page}", async ([FromRoute] int page, [FromQuery] bool isMale, [FromQuery] bool isFemale, IBabyNameRepository iBabyNameRepository) =>
+{
+    var babyNamesList = await iBabyNameRepository.GetBabyNames(page, isMale, isFemale);
+
+    return Results.Ok(babyNamesList);
+}).AllowAnonymous();
+
 #endregion
 
 

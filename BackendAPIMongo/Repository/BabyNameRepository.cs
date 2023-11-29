@@ -8,6 +8,7 @@ namespace BackendAPIMongo.Repository
     public interface IBabyNameRepository
     {
         public Task<List<BabyName>> GetBabyNames(int pageIndex);
+        public Task<List<BabyName>> GetBabyNames(int pageIndex, bool isMale, bool isFemale);
     }
 
     public class BabyNameRepository : IBabyNameRepository
@@ -36,6 +37,28 @@ namespace BackendAPIMongo.Repository
             var skipCount = (pageIndex - 1) * pageSize;
 
             var babyNamesList = _babyNames.Find(b => true)
+                                           .Skip(skipCount)
+                                           .Limit(pageSize)
+                                           .ToList();
+
+            return Task.FromResult(babyNamesList);
+        }
+
+        /// <summary>
+        /// Keeps track of which babyname page the user is on and skips a fixed number of names to return the right names based on gender.
+        /// </summary>
+        /// <param name="pageIndex"></param>
+        /// <param name="isMale"></param>
+        /// <param name="isFemale"></param>
+        /// <returns></returns>
+        public Task<List<BabyName>> GetBabyNames(int pageIndex, bool isMale, bool isFemale)
+        {
+            var skipCount = (pageIndex - 1) * pageSize;
+
+            var filterBuilder = Builders<BabyName>.Filter;
+            var filter = filterBuilder.Eq(b => b.IsMale, isMale) & filterBuilder.Eq(b => b.IsFemale, isFemale);
+
+            var babyNamesList = _babyNames.Find(filter)
                                            .Skip(skipCount)
                                            .Limit(pageSize)
                                            .ToList();
