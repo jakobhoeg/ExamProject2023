@@ -15,6 +15,8 @@ namespace BackendAPIMongo.Repository
 
         public Task AddPartner(User user, string partnerEmail);
 
+        public Task RemovePartner(User user, string partnerEmail);
+
     }
 
     public class UserRepository : IUserRepository
@@ -88,7 +90,7 @@ namespace BackendAPIMongo.Repository
                 throw new Exception(partnerEmail + " does not exist");
             }
 
-            if (user.Partner != null)
+            if (user.Partner != null || partner.Partner != null)
             {
                 throw new Exception("User already has a partner");
             }
@@ -105,6 +107,34 @@ namespace BackendAPIMongo.Repository
 
             return Task.FromResult(true);
 
+        }
+
+        public Task RemovePartner(User user, string partnerEmail)
+        {
+            var partner = _users.Find(u => u.Email == partnerEmail).FirstOrDefault();
+
+            if (partner == null)
+            {
+                throw new Exception(partnerEmail + " does not exist");
+            }
+
+            if (user.Partner == null || partner.Partner == null)
+            {
+                throw new Exception("User does not have a partner");
+            }
+
+            try
+            {
+                _users.UpdateOne(u => u.Email == user.Email, Builders<User>.Update.Set(u => u.Partner, null));
+                _users.UpdateOne(u => u.Email == partnerEmail, Builders<User>.Update.Set(u => u.Partner, null));
+                
+            }
+            catch (Exception e)
+            {
+                throw new Exception(e.Message);
+            }
+
+            return Task.FromResult(true);
         }
     }
 }
