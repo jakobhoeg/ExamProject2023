@@ -31,7 +31,12 @@ namespace BackendAPIMongo.Repository
             _users = database.GetCollection<User>(mongoDBRest.Value.UserCollectionName);
         }
 
-        // Authenticate user (login)
+        /// <summary>
+        /// Authenticates user by checking if user exists and if password is correct.
+        /// </summary>
+        /// <param name="user"></param>
+        /// <returns></returns>
+        /// <exception cref="Exception"></exception>
         public Task<bool> Authenticate(User user)
         {
             // Check if user exists
@@ -52,7 +57,13 @@ namespace BackendAPIMongo.Repository
 
         }
 
-        // Register user (not admin)
+        /// <summary>
+        /// Registers non admin user by checking if user already exists and 
+        /// then adds user to database and encrypts their password
+        /// </summary>
+        /// <param name="user"></param>
+        /// <returns></returns>
+        /// <exception cref="Exception"></exception>
         public Task Register(User user)
         {
             if (_users.Find(u => u.Email == user.Email).FirstOrDefault() != null)
@@ -68,7 +79,13 @@ namespace BackendAPIMongo.Repository
             return Task.FromResult(true);
         }
 
-        // Get user of logged in user
+        /// <summary>
+        /// Returns user object if user exists. 
+        /// Used to retrieve user object for frontend.
+        /// </summary>
+        /// <param name="user"></param>
+        /// <returns></returns>
+        /// <exception cref="Exception"></exception>
         public Task<User> GetUser(User user)
         {
             var userExists = _users.Find(u => u.Email == user.Email).FirstOrDefault();
@@ -81,6 +98,13 @@ namespace BackendAPIMongo.Repository
             return Task.FromResult(userExists);
         }
 
+        /// <summary>
+        /// Adds partner to user and the other way around.
+        /// </summary>
+        /// <param name="user"></param>
+        /// <param name="partnerEmail"></param>
+        /// <returns></returns>
+        /// <exception cref="Exception"></exception>
         public Task AddPartner(User user, string partnerEmail)
         {
             var partner = _users.Find(u => u.Email == partnerEmail).FirstOrDefault();
@@ -109,6 +133,13 @@ namespace BackendAPIMongo.Repository
 
         }
 
+        /// <summary>
+        /// Removes partner from user and the other way around.
+        /// </summary>
+        /// <param name="user"></param>
+        /// <param name="partnerEmail"></param>
+        /// <returns></returns>
+        /// <exception cref="Exception"></exception>
         public Task RemovePartner(User user, string partnerEmail)
         {
             var partner = _users.Find(u => u.Email == partnerEmail).FirstOrDefault();
