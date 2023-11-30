@@ -71,17 +71,38 @@ export default function Names() {
     const url = new URL(window.location.href);
     const pageIndex = url.searchParams.get("page");
     setIndex(Number(pageIndex) || 1);
+  
+    if (isMaleFilter || isFemaleFilter || isInternationalFilter) {
+      getBabyFilter(Number(pageIndex) || 1);
+    } else {
+      getBabyNames(Number(pageIndex) || 1);
+    }
+  }, [isMaleFilter, isFemaleFilter, isInternationalFilter]);
 
-    getBabyNames(Number(pageIndex) || 1);
-  }, []);
-
-  const checkIndex = () => {
+  const handleBackClick = () => {
     if (index > 1) {
       setIndex(index - 1);
       window.history.pushState({}, "", `/navne?page=${index - 1}`);
     } else {
       setIndex(1);
       window.history.pushState({}, "", `/navne?page=${1}`);
+    }
+  
+    if (isMaleFilter || isFemaleFilter || isInternationalFilter) {
+      getBabyFilter(index - 1);
+    } else {
+      getBabyNames(index - 1);
+    }
+  };
+
+  const handleNextClick = () => {
+    setIndex(index + 1);
+    window.history.pushState({}, "", `/navne?page=${index + 1}`);
+  
+    if (isMaleFilter || isFemaleFilter || isInternationalFilter) {
+      getBabyFilter(index + 1);
+    } else {
+      getBabyNames(index + 1);
     }
   };
 
@@ -151,8 +172,7 @@ export default function Names() {
           <button
             className="border-button"
             onClick={() => {
-              checkIndex();
-              getBabyNames(index - 1);
+              handleBackClick()
             }}
           >
             Forrige
@@ -163,9 +183,7 @@ export default function Names() {
           <button
             className="border-button"
             onClick={() => {
-              setIndex(index + 1);
-              window.history.pushState({}, "", `/navne?page=${index + 1}`);
-              getBabyNames(index + 1);
+              handleNextClick()
             }}
           >
             Næste
