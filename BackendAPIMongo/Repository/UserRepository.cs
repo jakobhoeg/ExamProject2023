@@ -19,6 +19,8 @@ namespace BackendAPIMongo.Repository
         public Task RemovePartner(User user, string partnerEmail);
 
         public Task<long> GetUserCount();
+
+        public Task AddLikedBabyNames(User user, List<BabyName> babyNames);
     }
 
     public class UserRepository : IUserRepository
@@ -187,6 +189,23 @@ namespace BackendAPIMongo.Repository
             return Task.FromResult(count);
         }
 
+        // Add liked baby names to user
+        public Task AddLikedBabyNames(User user, List<BabyName> babyNames)
+        {
+
+            try
+            {
+                _users.UpdateOne(u => u.Email == user.Email, Builders<User>.Update.Set(u => u.LikedBabyNames, babyNames));
+                Builders<User>.Update.Set(u => u.LikedBabyNames, babyNames);
+
+            }
+            catch (Exception e)
+            {
+                throw new Exception(e.Message);
+            }
+
+            return Task.FromResult(true);
+        }
 
     }
 }

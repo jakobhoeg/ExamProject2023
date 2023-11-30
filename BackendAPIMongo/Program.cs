@@ -258,4 +258,33 @@ app.MapDelete("/remove-partner", async (IUserRepository iUserRepository, HttpCon
     return Results.Unauthorized();
 }).RequireAuthorization("user");
 
+
+
+app.MapPut("/add-liked-baby-Names", async (IUserRepository iUserRepository, HttpContext context) =>
+{
+    if (context.User.Identity.IsAuthenticated)
+    {
+        var userEmail = context.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
+
+        // Read the request body and deserialize it into UserRequest
+        using (var reader = new StreamReader(context.Request.Body))
+        {
+            var requestBody = await reader.ReadToEndAsync();
+            var userRequest = JsonConvert.DeserializeObject<UserRequest>(requestBody);
+
+            if (userRequest == null || string.IsNullOrEmpty(userRequest.Email))
+            {
+                return Results.BadRequest("Invalid or missing email in the request body.");
+            }
+
+            var user = await iUserRepository.GetUser(new User { Email = userEmail });
+            await iUserRepository.AddLikedBabyNames(user, userRequest.LikedBabyNames);
+
+            return Results.Ok("Liked baby names added successfully");
+        }
+    }
+
+    return Results.Unauthorized();
+}).RequireAuthorization("user");
+
 app.Run();
