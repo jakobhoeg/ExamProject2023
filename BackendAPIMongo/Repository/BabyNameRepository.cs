@@ -9,6 +9,8 @@ namespace BackendAPIMongo.Repository
     {
         public Task<List<BabyName>> GetBabyNames(int pageIndex);
         public Task<List<BabyName>> GetBabyNames(int pageIndex, bool isMale, bool isFemale, bool isInternational);
+        public Task<long> AddLike(BabyName babyName);
+        public Task<long> RemoveLike(BabyName babyName);
     }
 
     public class BabyNameRepository : IBabyNameRepository
@@ -68,6 +70,27 @@ namespace BackendAPIMongo.Repository
                                            .ToList();
 
             return Task.FromResult(babyNamesList);
+        }
+
+        /// <summary>
+        /// Increments the amount of likes of a babyname by one.
+        /// </summary>
+        /// <param name="babyName"></param>
+        /// <returns></returns>
+        public Task<long> AddLike(BabyName babyName)
+        {
+            var update = Builders<BabyName>.Update.Inc(bn => bn.AmountOfLikes, 1);
+            var result = _babyNames.UpdateOne(bn => bn.Name == babyName.Name, update);
+
+            return Task.FromResult(result.ModifiedCount);
+        }
+
+        public Task<long> RemoveLike(BabyName babyName)
+        {
+            var update = Builders<BabyName>.Update.Inc(bn => bn.AmountOfLikes, -1);
+            var result = _babyNames.UpdateOne(bn => bn.Name == babyName.Name, update);
+
+            return Task.FromResult(result.ModifiedCount);
         }
     }
 }

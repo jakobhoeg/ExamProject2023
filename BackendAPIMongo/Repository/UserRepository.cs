@@ -20,7 +20,9 @@ namespace BackendAPIMongo.Repository
 
         public Task<long> GetUserCount();
 
-        public Task AddLikedBabyNames(User user, List<BabyName> babyNames);
+        public Task LikeBabyname(User user, BabyName babyName);
+
+        public Task UnlikeBabyname(User user, BabyName babyName);
     }
 
     public class UserRepository : IUserRepository
@@ -189,15 +191,20 @@ namespace BackendAPIMongo.Repository
             return Task.FromResult(count);
         }
 
-        // Add liked baby names to user
-        public Task AddLikedBabyNames(User user, List<BabyName> babyNames)
+        /// <summary>
+        /// Add babyname to user's liked babyname list.
+        /// </summary>
+        /// <param name="user"></param>
+        /// <param name="babyNames"></param>
+        /// <returns></returns>
+        /// <exception cref="Exception"></exception>
+        public Task LikeBabyname(User user, BabyName babyName)
         {
 
+            // Check if the babyname is already in the user's liked babyname list
             try
             {
-                _users.UpdateOne(u => u.Email == user.Email, Builders<User>.Update.Set(u => u.LikedBabyNames, babyNames));
-                Builders<User>.Update.Set(u => u.LikedBabyNames, babyNames);
-
+                _users.UpdateOne(u => u.Email == user.Email, Builders<User>.Update.Push(u => u.LikedBabyNames, babyName));
             }
             catch (Exception e)
             {
@@ -207,5 +214,18 @@ namespace BackendAPIMongo.Repository
             return Task.FromResult(true);
         }
 
+        public Task UnlikeBabyname(User user, BabyName babyName)
+        {
+            try
+            {
+                _users.UpdateOne(u => u.Email == user.Email, Builders<User>.Update.Pull(u => u.LikedBabyNames, babyName));
+            }
+            catch (Exception e)
+            {
+                throw new Exception(e.Message);
+            }
+
+            return Task.FromResult(true);
+        }
     }
 }

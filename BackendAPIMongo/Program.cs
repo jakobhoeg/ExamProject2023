@@ -259,29 +259,45 @@ app.MapDelete("/remove-partner", async (IUserRepository iUserRepository, HttpCon
 }).RequireAuthorization("user");
 
 
-
-app.MapPut("/add-liked-baby-Names", async (IUserRepository iUserRepository, HttpContext context) =>
+// Likes or dislikes a babyname.
+// If the babyname is already in the users likedBabyNames list, it will be removed and the count will be decreased.
+// If not , it will be added and the count will be increased.
+app.MapPut("/like", async (IUserRepository iUserRepository, IBabyNameRepository iBabyNameRepository, BabyName babyName, HttpContext context) =>
 {
     if (context.User.Identity.IsAuthenticated)
     {
         var userEmail = context.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
 
-        // Read the request body and deserialize it into UserRequest
-        using (var reader = new StreamReader(context.Request.Body))
-        {
-            var requestBody = await reader.ReadToEndAsync();
-            var userRequest = JsonConvert.DeserializeObject<UserRequest>(requestBody);
+        var user = await iUserRepository.GetUser(new User { Email = userEmail });
 
-            if (userRequest == null || string.IsNullOrEmpty(userRequest.Email))
+        if (user == null)
+        {
+            return Results.BadRequest("User does not exist");
+        }
+
+        if (user.LikedBabyNames.Any(bn => bn.Id == babyName.Id))
+        {
+            var unlikeBabyName = await iBabyNameRepository.RemoveLike(babyName);
+
+            await iUserRepository.UnlikeBabyname(user, babyName);
+
+            return Results.Ok();
+        }
+        else
+        {
+            var likeBabyName = await iBabyNameRepository.AddLike(babyName);
+
+            if (likeBabyName == 0)
             {
-                return Results.BadRequest("Invalid or missing email in the request body.");
+                return Results.BadRequest("Babyname does not exist");
             }
 
-            var user = await iUserRepository.GetUser(new User { Email = userEmail });
-            await iUserRepository.AddLikedBabyNames(user, userRequest.LikedBabyNames);
+            await iUserRepository.LikeBabyname(user, babyName);
 
-            return Results.Ok("Liked baby names added successfully");
+            return Results.Ok();
+            
         }
+
     }
 
     return Results.Unauthorized();
