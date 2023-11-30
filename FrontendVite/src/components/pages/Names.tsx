@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import "../../App.css";
 import { HeartFilledIcon } from "@radix-ui/react-icons";
+import MaleIcon from "../MaleIcon";
+import FemaleIcon from "../FemaleIcon";
 
 interface BabyName {
   id: string;
@@ -66,22 +68,42 @@ export default function Names() {
     }
   };
 
-
   useEffect(() => {
     const url = new URL(window.location.href);
     const pageIndex = url.searchParams.get("page");
     setIndex(Number(pageIndex) || 1);
 
-    getBabyNames(Number(pageIndex) || 1);
-  }, []);
+    if (isMaleFilter || isFemaleFilter || isInternationalFilter) {
+      getBabyFilter(Number(pageIndex) || 1);
+    } else {
+      getBabyNames(Number(pageIndex) || 1);
+    }
+  }, [isMaleFilter, isFemaleFilter, isInternationalFilter]);
 
-  const checkIndex = () => {
+  const handleBackClick = () => {
     if (index > 1) {
       setIndex(index - 1);
       window.history.pushState({}, "", `/navne?page=${index - 1}`);
     } else {
       setIndex(1);
       window.history.pushState({}, "", `/navne?page=${1}`);
+    }
+
+    if (isMaleFilter || isFemaleFilter || isInternationalFilter) {
+      getBabyFilter(index - 1);
+    } else {
+      getBabyNames(index - 1);
+    }
+  };
+
+  const handleNextClick = () => {
+    setIndex(index + 1);
+    window.history.pushState({}, "", `/navne?page=${index + 1}`);
+
+    if (isMaleFilter || isFemaleFilter || isInternationalFilter) {
+      getBabyFilter(index + 1);
+    } else {
+      getBabyNames(index + 1);
     }
   };
 
@@ -105,26 +127,26 @@ export default function Names() {
     <div className="flex flex-col w-screen pt-40 pb-20 justify-center items-center">
       <div className="flex flex-col justify-center items-center gap-8">
         <h1 className="text-5xl">Alle navne</h1>
-        <div className="flex flex-col items-center justify-center w-96 gap-4">
-
+        <div className="flex flex-col items-center justify-center w-[550px] gap-4">
           <div className="flex justify-center gap-4">
             <button
-              className={`border-button ${isMaleFilter ? "bg-orange-200" : ""
-                }`}
+              className={`border-button ${isMaleFilter ? "bg-orange-200" : ""}`}
               onClick={() => handleFilterClick("male")}
             >
               Male
             </button>
             <button
-              className={`border-button ${isFemaleFilter ? "bg-orange-200" : ""
-                }`}
+              className={`border-button ${
+                isFemaleFilter ? "bg-orange-200" : ""
+              }`}
               onClick={() => handleFilterClick("female")}
             >
               Female
             </button>
             <button
-              className={`border-button ${isInternationalFilter ? "bg-orange-200" : ""
-                }`}
+              className={`border-button ${
+                isInternationalFilter ? "bg-orange-200" : ""
+              }`}
               onClick={() => handleFilterClick("international")}
             >
               International
@@ -134,15 +156,27 @@ export default function Names() {
             babyNames.map((babyName) => (
               <div
                 key={babyName.id}
-                className="flex items-center w-full justify-between">
-                <p className="mr-2">{babyName.name}</p>
+                className="flex items-center w-full justify-between"
+              >
+                <div className="flex items-center gap-2">
+                  {babyName.isMale && babyName.isFemale ? (
+                    <div className="flex items-center gap-0.5">
+                      <MaleIcon />
+                      <FemaleIcon />
+                    </div>
+                  ) : babyName.isMale ? (
+                    <MaleIcon />
+                  ) : (
+                    <FemaleIcon />
+                  )}
 
-                <div className="flex items-center">
-                  <HeartFilledIcon className="h-4 w-4 mr-1 text-rose-500 hover:text-rose-400 hover:cursor-pointer" />
-                  <p className="mr-1">{babyName.amountOfLikes} Likes</p>
+                  <p className="text-lg mr-2">{babyName.name}</p>
                 </div>
 
-
+                <div className="flex items-center">
+                  <HeartFilledIcon className="h-5 w-5 mr-1 text-rose-500 hover:text-rose-400 hover:cursor-pointer" />
+                  <p className="text-lg mr-1">{babyName.amountOfLikes} Likes</p>
+                </div>
               </div>
             ))}
         </div>
@@ -151,8 +185,7 @@ export default function Names() {
           <button
             className="border-button"
             onClick={() => {
-              checkIndex();
-              getBabyNames(index - 1);
+              handleBackClick();
             }}
           >
             Forrige
@@ -163,9 +196,7 @@ export default function Names() {
           <button
             className="border-button"
             onClick={() => {
-              setIndex(index + 1);
-              window.history.pushState({}, "", `/navne?page=${index + 1}`);
-              getBabyNames(index + 1);
+              handleNextClick();
             }}
           >
             Næste

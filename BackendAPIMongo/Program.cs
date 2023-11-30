@@ -178,6 +178,11 @@ app.MapPost("/add-partner", async (IUserRepository iUserRepository, HttpContext 
                 return Results.BadRequest("Invalid or missing email in the request body.");
             }
 
+            if (userRequest.Email == userEmail)
+            {
+                return Results.BadRequest("You cannot add yourself as a partner.");
+            }
+
             var user = await iUserRepository.GetUser(new User { Email = userEmail });
             await iUserRepository.AddPartner(user, userRequest.Email);
 
