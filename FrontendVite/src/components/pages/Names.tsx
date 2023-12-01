@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import "../../App.css";
 import { HeartFilledIcon } from "@radix-ui/react-icons";
-import { HeartSwitch } from '@anatoliygatt/heart-switch';
 import MaleIcon from "../MaleIcon";
 import FemaleIcon from "../FemaleIcon";
 
@@ -10,6 +9,7 @@ interface BabyName {
   name: string;
   isMale: boolean;
   isFemale: boolean;
+  isInternational: boolean;
   amountOfLikes: number;
 }
 
@@ -49,10 +49,7 @@ export default function Names() {
       url.searchParams.append("page", index.toString());
       url.searchParams.append("isMale", isMaleFilter.toString());
       url.searchParams.append("isFemale", isFemaleFilter.toString());
-      url.searchParams.append(
-        "isInternational",
-        isInternationalFilter.toString()
-      );
+      url.searchParams.append("isInternational", isInternationalFilter.toString());
 
       const response = await fetch(url.toString(), {
         method: "GET",
@@ -119,12 +116,12 @@ export default function Names() {
         setIsFemaleFilter(!isFemaleFilter);
         break;
       case "international":
-      if (!isMaleFilter && !isFemaleFilter) {
-        setIsInternationalFilter(!isInternationalFilter);
-        setIsMaleFilter(true)
-      }  
-      else
-      setIsInternationalFilter(!isInternationalFilter);
+        if (!isMaleFilter && !isFemaleFilter) {
+          setIsInternationalFilter(!isInternationalFilter);
+          setIsMaleFilter(true)
+        }
+        else
+          setIsInternationalFilter(!isInternationalFilter);
         break;
       default:
         break;
@@ -198,7 +195,7 @@ export default function Names() {
                 className="flex items-center w-full justify-between"
               >
                 <div className="flex items-center gap-2">
-                  {babyName.isMale && babyName.isFemale ? (
+                  {babyName.isMale && babyName.isFemale? (
                     <div className="flex items-center gap-0.5">
                       <MaleIcon />
                       <FemaleIcon />
