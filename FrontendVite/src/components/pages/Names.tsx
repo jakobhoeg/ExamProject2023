@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import "../../App.css";
 import { HeartFilledIcon } from "@radix-ui/react-icons";
+import { HeartSwitch } from '@anatoliygatt/heart-switch';
 import MaleIcon from "../MaleIcon";
 import FemaleIcon from "../FemaleIcon";
 
@@ -18,6 +19,8 @@ export default function Names() {
   const [isMaleFilter, setIsMaleFilter] = useState(false);
   const [isFemaleFilter, setIsFemaleFilter] = useState(false);
   const [isInternationalFilter, setIsInternationalFilter] = useState(false);
+  const [isSwipeMode, setSwipeMode] = useState(false);
+  const [isListViewMode, setListViewMode] = useState(true);
 
   const getBabyNames = async (index: number) => {
     try {
@@ -123,33 +126,64 @@ export default function Names() {
     }
   };
 
+  const handleViewClick = (view: string) => {
+    switch (view) {
+      case "list":
+        setListViewMode(true);
+        setSwipeMode(false);
+        break;
+      case "swipe":
+        setSwipeMode(!isSwipeMode)
+        setListViewMode(false);
+        break;
+      default:
+        break;
+    }
+  }
+
   return (
     <div className="flex flex-col w-screen pt-40 pb-20 justify-center items-center">
       <div className="flex flex-col justify-center items-center gap-8">
         <h1 className="text-5xl">Alle navne</h1>
+        <div className="flex items-center justify-center w-full">
+
+          <button
+            className={`border-button ${isListViewMode ? "bg-orange-200" : ""}`}
+            onClick={() => handleViewClick("list")}
+          >
+            Liste Mode
+          </button>
+          <button
+            className={`border-button ${isSwipeMode ? "bg-orange-200" : ""}`}
+            onClick={() => handleViewClick("swipe")}
+          >
+            Swipe Mode
+          </button>
+        </div>
         <div className="flex flex-col items-center justify-center w-[550px] gap-4">
+          <div className="flex justify-center">
+            <h2 className="text-2xl">Opsæt filter</h2>
+          </div>
           <div className="flex justify-center gap-4">
             <button
               className={`border-button ${isMaleFilter ? "bg-orange-200" : ""}`}
               onClick={() => handleFilterClick("male")}
             >
-              Male
+              Mand
             </button>
             <button
-              className={`border-button ${
-                isFemaleFilter ? "bg-orange-200" : ""
-              }`}
+              className={`border-button ${isFemaleFilter ? "bg-orange-200" : ""
+                }`}
               onClick={() => handleFilterClick("female")}
             >
-              Female
+              Kvinde
             </button>
             <button
-              className={`border-button ${
-                isInternationalFilter ? "bg-orange-200" : ""
-              }`}
+              className={`border-button ${isInternationalFilter ? "bg-orange-200" : ""
+                }`}
               onClick={() => handleFilterClick("international")}
             >
-              International
+              Internationalt
             </button>
           </div>
           {babyNames &&
