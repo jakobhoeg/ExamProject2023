@@ -201,7 +201,6 @@ namespace BackendAPIMongo.Repository
         public Task LikeBabyname(User user, BabyName babyName)
         {
 
-            // Check if the babyname is already in the user's liked babyname list
             try
             {
                 _users.UpdateOne(u => u.Email == user.Email, Builders<User>.Update.Push(u => u.LikedBabyNames, babyName));
@@ -218,7 +217,7 @@ namespace BackendAPIMongo.Repository
         {
             try
             {
-                _users.UpdateOne(u => u.Email == user.Email, Builders<User>.Update.Pull(u => u.LikedBabyNames, babyName));
+                _users.UpdateOne(u => u.Email == user.Email, Builders<User>.Update.PullFilter(u => u.LikedBabyNames, bn => bn.Id == babyName.Id));
             }
             catch (Exception e)
             {

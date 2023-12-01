@@ -151,6 +151,7 @@ app.MapGet("/user", async (IUserRepository iUserRepository, HttpContext context)
                 user.FirstName,
                 user.IsAdmin,
                 user.Partner,
+                user.LikedBabyNames
             });
     }
     else
