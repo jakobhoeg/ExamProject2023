@@ -119,7 +119,12 @@ export default function Names() {
         setIsFemaleFilter(!isFemaleFilter);
         break;
       case "international":
+      if (!isMaleFilter && !isFemaleFilter) {
         setIsInternationalFilter(!isInternationalFilter);
+        setIsMaleFilter(true)
+      }  
+      else
+      setIsInternationalFilter(!isInternationalFilter);
         break;
       default:
         break;
@@ -133,7 +138,7 @@ export default function Names() {
         setSwipeMode(false);
         break;
       case "swipe":
-        setSwipeMode(!isSwipeMode)
+        setSwipeMode(true)
         setListViewMode(false);
         break;
       default:
