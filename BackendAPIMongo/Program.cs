@@ -263,7 +263,7 @@ app.MapDelete("/remove-partner", async (IUserRepository iUserRepository, HttpCon
 // Likes or dislikes a babyname.
 // If the babyname is already in the users likedBabyNames list, it will be removed and the count will be decreased.
 // If not , it will be added and the count will be increased.
-app.MapPut("/like", async (IUserRepository iUserRepository, IBabyNameRepository iBabyNameRepository, BabyName babyName, HttpContext context) =>
+app.MapPut("/babynames/like", async (IUserRepository iUserRepository, IBabyNameRepository iBabyNameRepository, BabyName babyName, HttpContext context) =>
 {
     if (context.User.Identity.IsAuthenticated)
     {
@@ -276,6 +276,7 @@ app.MapPut("/like", async (IUserRepository iUserRepository, IBabyNameRepository 
             return Results.BadRequest("User does not exist");
         }
 
+        // If the babyname is already in the users likedBabyNames list, it will be removed and the count will be decreased.
         if (user.LikedBabyNames.Any(bn => bn.Id == babyName.Id))
         {
             var unlikeBabyName = await iBabyNameRepository.RemoveLike(babyName);
@@ -284,7 +285,7 @@ app.MapPut("/like", async (IUserRepository iUserRepository, IBabyNameRepository 
 
             return Results.Ok();
         }
-        else
+        else // If not , it will be added and the count will be increased.
         {
             var likeBabyName = await iBabyNameRepository.AddLike(babyName);
 
