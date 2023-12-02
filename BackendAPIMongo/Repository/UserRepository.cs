@@ -10,6 +10,7 @@ namespace BackendAPIMongo.Repository
     public interface IUserRepository
     {
         public Task<bool> Authenticate(User user);
+
         public Task Register(User user);
 
         public Task<User> GetUser(User user);
@@ -18,7 +19,7 @@ namespace BackendAPIMongo.Repository
 
         public Task RemovePartner(User user, string partnerEmail);
 
-        public Task<long> GetUserCount();
+        public Task<long> GetUserCountAsync();
 
         public Task LikeBabyname(User user, BabyName babyName);
 
@@ -60,7 +61,6 @@ namespace BackendAPIMongo.Repository
             }
 
             return Task.FromResult(true);
-
         }
 
         /// <summary>
@@ -136,7 +136,6 @@ namespace BackendAPIMongo.Repository
             }
 
             return Task.FromResult(true);
-
         }
 
         /// <summary>
@@ -175,7 +174,7 @@ namespace BackendAPIMongo.Repository
         }
 
         // Get the number of registered users in the database
-        public Task<long> GetUserCount()
+        public Task<long> GetUserCountAsync()
         {
             long count = 0;
 

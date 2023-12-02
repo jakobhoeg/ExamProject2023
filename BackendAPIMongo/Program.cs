@@ -220,7 +220,7 @@ app.MapGet("/statistics/user-count", async (IUserRepository iUserRepository, Htt
     if (context.User.Identity.IsAuthenticated)
     {
         // Get all users
-        long users = await iUserRepository.GetUserCount();
+        long users = await iUserRepository.GetUserCountAsync();
         return Results.Ok(users);
     }
     else
@@ -228,7 +228,7 @@ app.MapGet("/statistics/user-count", async (IUserRepository iUserRepository, Htt
         return Results.Unauthorized();
     }
 
-}).RequireAuthorization("user", "admin");
+}).RequireAuthorization("user"); // TODO: Add admin authorization
 #endregion
 
 
@@ -297,9 +297,7 @@ app.MapPut("/babynames/like", async (IUserRepository iUserRepository, IBabyNameR
             await iUserRepository.LikeBabyname(user, babyName);
 
             return Results.Ok();
-            
         }
-
     }
 
     return Results.Unauthorized();
