@@ -215,13 +215,13 @@ app.MapGet("/babynames/filter", async ([FromQuery] int page, [FromQuery] bool is
 #endregion
 
 #region Statistics endpoints
+
 app.MapGet("/statistics/user-count", async (IUserRepository iUserRepository, HttpContext context) =>
 {
     if (context.User.Identity.IsAuthenticated)
     {
-        // Get all users
-        long users = await iUserRepository.GetUserCountAsync();
-        return Results.Ok(users);
+        long userCount = await iUserRepository.GetUserCountAsync();
+        return Results.Ok(userCount);
     }
     else
     {
@@ -229,6 +229,7 @@ app.MapGet("/statistics/user-count", async (IUserRepository iUserRepository, Htt
     }
 
 }).RequireAuthorization("user"); // TODO: Add admin authorization
+
 #endregion
 
 

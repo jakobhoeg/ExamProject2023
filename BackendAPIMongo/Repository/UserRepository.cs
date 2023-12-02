@@ -173,21 +173,24 @@ namespace BackendAPIMongo.Repository
             return Task.FromResult(true);
         }
 
-        // Get the number of registered users in the database
+        /// <summary>
+        /// Counts the amount of users in the database.
+        /// </summary>
+        /// <returns></returns>
         public Task<long> GetUserCountAsync()
         {
-            long count = 0;
+            long userCount = 0;
 
             try
             {
-                count = _users.CountDocuments(new BsonDocument());
+                userCount = _users.CountDocuments(new BsonDocument());
             }
             catch (Exception e)
             {
                 Debug.WriteLine(e.Message);
             }
 
-            return Task.FromResult(count);
+            return Task.FromResult(userCount);
         }
 
         /// <summary>
