@@ -142,6 +142,30 @@ export default function Names() {
         break;
     }
   }
+  const handleLikeClick = async (event: React.MouseEvent<SVGElement>, babyName: BabyName) => {
+    event;
+    
+    try {
+      console.log(babyName);
+      const response = await fetch(`http://localhost:5000/babynames/like`, {
+        method: "PUT",
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(babyName),
+        credentials: "include",
+      });
+  
+      if (response.ok) {
+
+        //mangler at opdatere antallet af likes realtime på webclient
+        
+      }
+    } catch (error) {
+      console.error(error);
+    }
+};
+
 
   return (
     <div className="flex flex-col w-screen pt-40 pb-20 justify-center items-center">
@@ -210,7 +234,9 @@ export default function Names() {
                 </div>
 
                 <div className="flex items-center">
-                  <HeartFilledIcon className="h-5 w-5 mr-1 text-rose-500 hover:text-rose-400 hover:cursor-pointer" />
+                  <HeartFilledIcon className="h-5 w-5 mr-1 text-rose-500 hover:text-rose-400 hover:cursor-pointer"
+                    onClick={(event) => handleLikeClick(event, babyName)}
+                  />
                   <p className="text-lg mr-1">{babyName.amountOfLikes} Likes</p>
                 </div>
               </div>
