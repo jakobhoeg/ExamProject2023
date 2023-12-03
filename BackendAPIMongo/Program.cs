@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using System.ComponentModel.DataAnnotations;
 using System.Security.Claims;
-using System.Xml.Linq;
 
 var builder = WebApplication.CreateBuilder(args);
 var allowedOrigins = "http://localhost:5173";
@@ -14,7 +13,7 @@ var allowedOrigins = "http://localhost:5173";
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-const String AuthScheme = "token";
+const string AuthScheme = "token";
 
 builder.Services.AddAuthentication(AuthScheme)
     .AddCookie(AuthScheme, Options =>
@@ -214,25 +213,6 @@ app.MapGet("/babynames/filter", async ([FromQuery] int page, [FromQuery] bool is
 
 #endregion
 
-#region Statistics endpoints
-
-app.MapGet("/statistics/user-count", async (IUserRepository iUserRepository, HttpContext context) =>
-{
-    if (context.User.Identity.IsAuthenticated)
-    {
-        long userCount = await iUserRepository.GetUserCountAsync();
-        return Results.Ok(userCount);
-    }
-    else
-    {
-        return Results.Unauthorized();
-    }
-
-}).RequireAuthorization("user"); // TODO: Add admin authorization
-
-#endregion
-
-
 app.MapDelete("/remove-partner", async (IUserRepository iUserRepository, HttpContext context) =>
 {
     if (context.User.Identity.IsAuthenticated)
@@ -303,5 +283,50 @@ app.MapPut("/babynames/like", async (IUserRepository iUserRepository, IBabyNameR
 
     return Results.Unauthorized();
 }).RequireAuthorization("user");
+
+app.MapPut("/update-user-email", async (IUserRepository iUserRepository, HttpContext context) =>
+{
+    if (context.User.Identity.IsAuthenticated)
+    {
+        string? userEmail = context.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
+
+        // Read the request body and deserialize it into UserRequest
+        using (StreamReader? reader = new StreamReader(context.Request.Body))
+        {
+            string? requestBody = await reader.ReadToEndAsync();
+            UserRequest? userRequest = JsonConvert.DeserializeObject<UserRequest>(requestBody);
+
+            if (userRequest == null || string.IsNullOrEmpty(userRequest.Email))
+            {
+                return Results.BadRequest("Invalid or missing email in the request body.");
+            }
+
+            User? user = await iUserRepository.GetUser(new User { Email = userEmail });
+            await iUserRepository.ChangeEmailAddressAsync(user, userRequest.Email);
+
+            return Results.Ok("Email updated successfully");
+        }
+    }
+
+    return Results.Unauthorized();
+}).RequireAuthorization("user");
+
+#region Admin endpoints
+
+app.MapGet("/statistics/user-count", async (IUserRepository iUserRepository, HttpContext context) =>
+{
+    if (context.User.Identity.IsAuthenticated)
+    {
+        long userCount = await iUserRepository.GetUserCountAsync();
+        return Results.Ok(userCount);
+    }
+    else
+    {
+        return Results.Unauthorized();
+    }
+
+}).RequireAuthorization("user"); // TODO: Add admin authorization
+
+#endregion
 
 app.Run();

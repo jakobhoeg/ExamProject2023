@@ -9,21 +9,18 @@ namespace BackendAPIMongo.Repository
 
     public interface IUserRepository
     {
+        // Methods mostly intended for users
         public Task<bool> Authenticate(User user);
-
         public Task Register(User user);
-
         public Task<User> GetUser(User user);
-
         public Task AddPartner(User user, string partnerEmail);
-
         public Task RemovePartner(User user, string partnerEmail);
-
-        public Task<long> GetUserCountAsync();
-
         public Task LikeBabyname(User user, BabyName babyName);
-
         public Task UnlikeBabyname(User user, BabyName babyName);
+        public Task ChangeEmailAddressAsync(User user, string newEmail);
+
+        // Admin methods
+        public Task<long> GetUserCountAsync();
     }
 
     public class UserRepository : IUserRepository
@@ -174,26 +171,6 @@ namespace BackendAPIMongo.Repository
         }
 
         /// <summary>
-        /// Counts the amount of users in the database.
-        /// </summary>
-        /// <returns></returns>
-        public Task<long> GetUserCountAsync()
-        {
-            long userCount = 0;
-
-            try
-            {
-                userCount = _users.CountDocuments(new BsonDocument());
-            }
-            catch (Exception e)
-            {
-                Debug.WriteLine(e.Message);
-            }
-
-            return Task.FromResult(userCount);
-        }
-
-        /// <summary>
         /// Add babyname to user's liked babyname list.
         /// </summary>
         /// <param name="user"></param>
@@ -228,5 +205,61 @@ namespace BackendAPIMongo.Repository
 
             return Task.FromResult(true);
         }
+
+        /// <summary>
+        /// Changes a user's email address.
+        /// </summary>
+        /// <param name="user"></param>
+        /// <param name="newEmail"></param>
+        /// <returns></returns>
+        /// <exception cref="Exception"></exception>
+        public Task ChangeEmailAddressAsync(User user, string newEmail)
+        {
+            if (_users.Find(u => u.Email == user.Email).FirstOrDefault() == null)
+            {
+                throw new Exception("User does not exist");
+            }
+            else if (_users.Find(u => u.Email == newEmail).FirstOrDefault() != null)
+            {
+                throw new Exception("Email already exists");
+            }
+            else
+            {
+                try
+                {
+                    _users.UpdateOne(u => u.Email == user.Email, Builders<User>.Update.Set(u => u.Email, newEmail));
+                }
+                catch (Exception e)
+                {
+                    throw new Exception(e.Message);
+                }
+            }
+
+            return Task.FromResult(true);
+        }
+
+        #region Admin methods
+
+        /// <summary>
+        /// Counts the amount of users in the database.
+        /// </summary>
+        /// <returns></returns>
+        public Task<long> GetUserCountAsync()
+        {
+            long userCount = 0;
+
+            try
+            {
+                userCount = _users.CountDocuments(new BsonDocument());
+            }
+            catch (Exception e)
+            {
+                Debug.WriteLine(e.Message);
+            }
+
+            return Task.FromResult(userCount);
+        }
+
+        #endregion
     }
 }
