@@ -35,19 +35,20 @@ builder.Services.AddAuthorization(builder =>
 
 builder.Services.AddCors(options =>
 {
-options.AddPolicy(name: allowedOrigins,
-    policy =>
-    {
-        policy.WithOrigins(allowedOrigins)
-        .AllowAnyHeader()
-        .AllowAnyMethod()
-        .AllowCredentials();
-    });
+    options.AddPolicy(name: allowedOrigins,
+        policy =>
+        {
+            policy.WithOrigins(allowedOrigins)
+            .AllowAnyHeader()
+            .AllowAnyMethod()
+            .AllowCredentials();
+        });
 });
 
 
 builder.Services.AddSingleton<IUserRepository, UserRepository>();
 builder.Services.AddSingleton<IBabyNameRepository, BabyNameRepository>();
+builder.Services.AddSingleton<IMatchedBabyNamesRepository, MatchedBabyNamesRepository>();
 builder.Services.Configure<MongoDBRestSettings>(builder.Configuration.GetSection(nameof(MongoDBRestSettings)));
 
 var app = builder.Build();
@@ -161,7 +162,7 @@ app.MapGet("/user", async (IUserRepository iUserRepository, HttpContext context)
 }).RequireAuthorization("user");
 
 
-app.MapPost("/add-partner", async (IUserRepository iUserRepository, HttpContext context) =>
+app.MapPost("/add-partner", async (IUserRepository iUserRepository, HttpContext context, IMatchedBabyNamesRepository iMatchedBabyNamesRepository) =>
 {
     if (context.User.Identity.IsAuthenticated)
     {
@@ -184,7 +185,13 @@ app.MapPost("/add-partner", async (IUserRepository iUserRepository, HttpContext 
             }
 
             var user = await iUserRepository.GetUser(new User { Email = userEmail });
-            await iUserRepository.AddPartner(user, userRequest.Email);
+            var partner = await iUserRepository.GetUser(new User { Email = userRequest.Email });
+            
+            // Add partner to user and the other way around.
+            await iUserRepository.AddPartner(user, partner.Email);
+
+            // Create a MatchedBabyNames object for the users with an empty LikedBabyNames list
+            await iMatchedBabyNamesRepository.CreateMatchedUsersList(user, partner);
 
             return Results.Ok("Partner added successfully");
         }
@@ -244,7 +251,8 @@ app.MapDelete("/remove-partner", async (IUserRepository iUserRepository, HttpCon
 // Likes or dislikes a babyname.
 // If the babyname is already in the users likedBabyNames list, it will be removed and the count will be decreased.
 // If not , it will be added and the count will be increased.
-app.MapPut("/babynames/like", async (IUserRepository iUserRepository, IBabyNameRepository iBabyNameRepository, BabyName babyName, HttpContext context) =>
+// It also checks if the user has a partner and if the partner has liked the babyname too and then add or removes it from the matchedBabyNames list.
+app.MapPut("/babynames/like", async (IUserRepository iUserRepository, IBabyNameRepository iBabyNameRepository, BabyName babyName, HttpContext context, IMatchedBabyNamesRepository iMatchedBabyRepository) =>
 {
     if (context.User.Identity.IsAuthenticated)
     {
@@ -264,10 +272,36 @@ app.MapPut("/babynames/like", async (IUserRepository iUserRepository, IBabyNameR
 
             await iUserRepository.UnlikeBabyname(user, babyName);
 
+            // If the user has a partner, check if the partner has liked the babyname too and then remove it from the MatchedBabyNames list.
+            if (user.Partner != null)
+            {
+                try
+                {
+                    // Gets the partner object from the database
+                    var partner = await iUserRepository.GetUser(new User { Email = user.Partner.Email });
+
+                    // Checks if the partner has liked the babyname too
+                    if (partner.LikedBabyNames.Any(bn => bn.Id == babyName.Id))
+                    {
+                        // If the partner has liked the babyname too, retrieve the existing MatchedBabyNames object from the database
+                        var matchedBabyNames = await iMatchedBabyRepository.GetMatchedBabyNames(user, partner);
+
+                        // Remove the babyname from the MatchedBabyNames objects LikedBabyNames list
+                        await iMatchedBabyRepository.RemoveMatchedBabyNames(user, partner, babyName, matchedBabyNames);
+                    }
+
+                }
+                catch (Exception e)
+                {
+                    return Results.BadRequest(e.Message);
+                }
+            }
+
             return Results.Ok();
         }
         else // If not , it will be added and the count will be increased.
         {
+            // Add like to the babyName
             var likeBabyName = await iBabyNameRepository.AddLike(babyName);
 
             if (likeBabyName == 0)
@@ -275,7 +309,31 @@ app.MapPut("/babynames/like", async (IUserRepository iUserRepository, IBabyNameR
                 return Results.BadRequest("Babyname does not exist");
             }
 
+            // Add the babyname to the user's likedBabyNames list
             await iUserRepository.LikeBabyname(user, babyName);
+
+            // If the user has a partner, check if the partner has liked the babyname too and then add it to the MatchedBabyNames list.
+            if (user.Partner != null)
+            {
+                try
+                {
+                    // Gets the partner object from the database
+                    var partner = await iUserRepository.GetUser(new User { Email = user.Partner.Email });
+
+                    // Checks if the partner has liked the babyname too
+                    if (partner.LikedBabyNames.Any(bn => bn.Id == babyName.Id))
+                    {
+                        // Finds the existing MatchedBabyNames object from the database containing the users
+                        var matchedBabyNames = await iMatchedBabyRepository.GetMatchedBabyNames(user, partner);
+
+                        // Adds the babyname to the MatchedBabyNames objects LikedBabyNames list
+                        await iMatchedBabyRepository.AddMatchedBabyNames(user, partner, babyName, matchedBabyNames);
+                    }
+                } catch (Exception e)
+                {
+                    return Results.BadRequest(e.Message);
+                }
+            }
 
             return Results.Ok();
         }
