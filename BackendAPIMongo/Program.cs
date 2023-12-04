@@ -369,6 +369,40 @@ app.MapPut("/update-user-email", async (IUserRepository iUserRepository, HttpCon
     return Results.Unauthorized();
 }).RequireAuthorization("user");
 
+
+app.MapGet("/matches", async (IUserRepository iUserRepository, IMatchedBabyNamesRepository iMatchedBabyNamesRepository, HttpContext context) =>
+{
+    if (context.User.Identity.IsAuthenticated)
+    {
+        var userEmail = context.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
+
+        var user = await iUserRepository.GetUser(new User { Email = userEmail });
+
+        if (user == null)
+        {
+            return Results.BadRequest("User does not exist");
+        }
+
+        if (user.Partner == null)
+        {
+            return Results.BadRequest("User does not have a partner");
+        }
+
+        var partner = await iUserRepository.GetUser(new User { Email = user.Partner.Email });
+
+        if (partner == null)
+        {
+            return Results.BadRequest("Partner does not exist");
+        }
+
+        var matchedBabyNames = await iMatchedBabyNamesRepository.GetMatchedBabyNames(user, partner);
+
+        return Results.Ok(matchedBabyNames);
+    }
+
+    return Results.Unauthorized();
+}).RequireAuthorization("user"); 
+
 #region Admin endpoints
 
 app.MapGet("/statistics/user-count", async (IUserRepository iUserRepository, HttpContext context) =>
