@@ -142,7 +142,16 @@ export default function Names() {
         break;
     }
   }
-  const handleLikeClick = async (event: React.MouseEvent<SVGElement>, babyName: BabyName) => {
+
+  const checkFiltersAndFetchNames = () => {
+    if (isMaleFilter || isFemaleFilter || isInternationalFilter) {
+      getBabyFilter(index);
+    } else {
+      getBabyNames(index);
+    }
+  }
+
+  const handleLikeClick = async (babyName: BabyName) => {
     event;
     
     try {
@@ -158,7 +167,8 @@ export default function Names() {
   
       if (response.ok) {
 
-        //mangler at opdatere antallet af likes realtime på webclient
+        // Update UI 
+        checkFiltersAndFetchNames();
         
       }
     } catch (error) {
@@ -235,7 +245,7 @@ export default function Names() {
 
                 <div className="flex items-center">
                   <HeartFilledIcon className="h-5 w-5 mr-1 text-rose-500 hover:text-rose-400 hover:cursor-pointer"
-                    onClick={(event) => handleLikeClick(event, babyName)}
+                    onClick={() => handleLikeClick(babyName)}
                   />
                   <p className="text-lg mr-1">{babyName.amountOfLikes} Likes</p>
                 </div>
