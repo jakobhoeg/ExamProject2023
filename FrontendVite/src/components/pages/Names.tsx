@@ -105,17 +105,23 @@ export default function Names() {
     switch (filter) {
       case "male":
         setIsMaleFilter(!isMaleFilter);
+        if (isInternationalFilter && !isFemaleFilter) {
+          setIsInternationalFilter(false); 
+        }
         break;
       case "female":
         setIsFemaleFilter(!isFemaleFilter);
+        if (isInternationalFilter && !isMaleFilter) {
+          setIsInternationalFilter(false); // 
+        }
         break;
       case "international":
         if (!isMaleFilter && !isFemaleFilter) {
           setIsInternationalFilter(!isInternationalFilter);
-          setIsMaleFilter(true)
-        }
-        else
+          setIsMaleFilter(true); 
+        } else {
           setIsInternationalFilter(!isInternationalFilter);
+        }
         break;
       default:
         break;
