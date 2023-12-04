@@ -55,10 +55,7 @@ export default function Navbar() {
               </div>
             )}
       </div>
-      <div className='space-x-2 items-center hidden lg:flex'>
-        <input type="text" placeholder="Søg navn" className='border py-2 px-4'/>
-        <button className='border-button'>Søg</button>
-      </div>
+     
     </nav>
   )
 }
