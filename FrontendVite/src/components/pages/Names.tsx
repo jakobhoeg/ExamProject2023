@@ -3,15 +3,9 @@ import "../../App.css";
 import { HeartFilledIcon } from "@radix-ui/react-icons";
 import MaleIcon from "../MaleIcon";
 import FemaleIcon from "../FemaleIcon";
+import { BabyName } from "../../types/types";
 
-interface BabyName {
-  id: string;
-  name: string;
-  isMale: boolean;
-  isFemale: boolean;
-  isInternational: boolean;
-  amountOfLikes: number;
-}
+
 
 export default function Names() {
   const [babyNames, setBabyNames] = useState<BabyName[]>([]);
@@ -152,7 +146,6 @@ export default function Names() {
   }
 
   const handleLikeClick = async (babyName: BabyName) => {
-    event;
     
     try {
       console.log(babyName);

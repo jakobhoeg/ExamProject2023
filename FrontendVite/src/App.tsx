@@ -8,6 +8,7 @@ import SignIn from "./components/pages/SignIn";
 import Profile from "./components/pages/Profile";
 import Names from "./components/pages/Names";
 import AddPartner from "./components/pages/AddPartner";
+import Matches from "./components/pages/Matches";
 
 function App() {
   return (
@@ -32,6 +33,9 @@ function App() {
         </Route>
         <Route path="/tilknyt-partner">
           <AddPartner />
+        </Route>
+        <Route path="/matches">
+          <Matches />
         </Route>
       </Switch>
     </div>

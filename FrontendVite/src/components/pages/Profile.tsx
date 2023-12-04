@@ -1,12 +1,6 @@
 import { useEffect, useState } from "react";
 import { useAuth } from "../../context/AuthProvider";
-
-interface User {
-  id: string;
-  firstName: string;
-  email: string;
-  partner: User | null;
-}
+import { User } from "../../types/types";
 
 export default function Profile() {
   const { isLoggedIn } = useAuth();

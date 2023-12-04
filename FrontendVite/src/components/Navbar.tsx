@@ -11,7 +11,7 @@ export default function Navbar() {
 
     const pageLinks = [
         { name: 'Alle Navne', path: '/navne' },
-        { name: 'Vores Matches', path: '/', imgUrl: '/heart.svg'},
+        { name: 'Vores Matches', path: '/matches', imgUrl: '/heart.svg'},
       ]
 
   return (
