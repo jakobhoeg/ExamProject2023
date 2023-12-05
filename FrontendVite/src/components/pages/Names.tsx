@@ -3,9 +3,8 @@ import "../../App.css";
 import { HeartFilledIcon, HeartIcon } from "@radix-ui/react-icons";
 import MaleIcon from "../MaleIcon";
 import FemaleIcon from "../FemaleIcon";
-import { BabyName } from "../../types/types";
-
-
+import { BabyName, User } from "../../types/types";
+import { useAuth } from "../../context/AuthProvider";
 
 export default function Names() {
   const [babyNames, setBabyNames] = useState<BabyName[]>([]);
@@ -15,8 +14,37 @@ export default function Names() {
   const [isInternationalFilter, setIsInternationalFilter] = useState(false);
   const [isSwipeMode, setSwipeMode] = useState(false);
   const [isListViewMode, setListViewMode] = useState(true);
-  const [sortMethod, setSortMethod] = useState('name/asc');
-  const [likedNames, setLikedNames] = useState<{ [id: string]: boolean }>({});
+  const [sortMethod, setSortMethod] = useState("name/asc");
+  const [likedNames, setLikedNames] = useState<{ [key: string]: boolean }>({});
+  const [user, setUser] = useState<User | null>(null);
+  const { isLoggedIn } = useAuth();
+
+  useEffect(() => {
+    const getUserInfo = async () => {
+      try {
+        const response = await fetch("http://localhost:5000/user", {
+          method: "GET",
+          credentials: "include",
+        });
+        if (response.ok) {
+          const userData = await response.json();
+          setUser(userData);
+        } else {
+          throw new Error("User not found");
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    if (isLoggedIn) {
+      getUserInfo();
+    } else {
+      // Update the UI if the user logs out
+      setUser(null);
+      setLikedNames({});
+    }
+  }, [isLoggedIn, likedNames]);
 
   const getBabyNames = async (index: number) => {
     try {
@@ -44,7 +72,10 @@ export default function Names() {
       url.searchParams.append("page", index.toString());
       url.searchParams.append("isMale", isMaleFilter.toString());
       url.searchParams.append("isFemale", isFemaleFilter.toString());
-      url.searchParams.append("isInternational", isInternationalFilter.toString());
+      url.searchParams.append(
+        "isInternational",
+        isInternationalFilter.toString()
+      );
 
       const response = await fetch(url.toString(), {
         method: "GET",
@@ -136,13 +167,13 @@ export default function Names() {
         setSwipeMode(false);
         break;
       case "swipe":
-        setSwipeMode(true)
+        setSwipeMode(true);
         setListViewMode(false);
         break;
       default:
         break;
     }
-  }
+  };
 
   const checkFiltersAndFetchNames = () => {
     if (isMaleFilter || isFemaleFilter || isInternationalFilter) {
@@ -150,12 +181,17 @@ export default function Names() {
     } else {
       getBabyNames(index);
     }
-  }
+  };
 
   const handleLikeClick = async (babyName: BabyName) => {
-    setLikedNames({ ...likedNames, [babyName.id]: !likedNames[babyName.id] });
     try {
-      console.log(babyName);
+      // Update local state to toggle UI immediately
+      setLikedNames((prevLikedNames) => ({
+        ...prevLikedNames,
+        [babyName.id]: !prevLikedNames[babyName.id],
+      }));
+  
+      // Update DB
       const response = await fetch(`http://localhost:5000/babynames/like`, {
         method: "PUT",
         headers: {
@@ -164,25 +200,22 @@ export default function Names() {
         body: JSON.stringify(babyName),
         credentials: "include",
       });
-
+  
       if (response.ok) {
-
-        // Update UI 
+        // Update UI by fetching the latest list of baby names (with updated likes)
         checkFiltersAndFetchNames();
-
       }
     } catch (error) {
       console.error(error);
     }
   };
-
+  
 
   return (
     <div className="flex flex-col w-screen pt-40 pb-20 justify-center items-center">
       <div className="flex flex-col justify-center items-center gap-8">
         <h1 className="text-5xl">Alle navne</h1>
         <div className="flex items-center justify-center w-full">
-
           <button
             className={`border-button ${isListViewMode ? "bg-orange-200" : ""}`}
             onClick={() => handleViewClick("list")}
@@ -209,15 +242,17 @@ export default function Names() {
               Mand
             </button>
             <button
-              className={`border-button ${isFemaleFilter ? "bg-orange-200" : ""
-                }`}
+              className={`border-button ${
+                isFemaleFilter ? "bg-orange-200" : ""
+              }`}
               onClick={() => handleFilterClick("female")}
             >
               Kvinde
             </button>
             <button
-              className={`border-button ${isInternationalFilter ? "bg-orange-200" : ""
-                }`}
+              className={`border-button ${
+                isInternationalFilter ? "bg-orange-200" : ""
+              }`}
               onClick={() => handleFilterClick("international")}
             >
               Internationalt
@@ -233,7 +268,6 @@ export default function Names() {
               <option value="likes/asc">Sortér efter likes (Stigende)</option>
               <option value="likes/desc">Sortér efter likes (Faldende)</option>
             </select>
-
           </div>
           {babyNames &&
             babyNames.map((babyName) => (
@@ -257,7 +291,11 @@ export default function Names() {
                 </div>
 
                 <div className="flex items-center">
-                  {likedNames[babyName.id] ? (
+                  {user &&
+                  user.likedBabyNames &&
+                  user.likedBabyNames.some(
+                    (likedName) => likedName.id === babyName.id
+                  ) ? (
                     <HeartFilledIcon
                       className="h-5 w-5 mr-1 text-rose-500 hover:text-rose-400 hover:cursor-pointer"
                       onClick={() => handleLikeClick(babyName)}
@@ -268,6 +306,7 @@ export default function Names() {
                       onClick={() => handleLikeClick(babyName)}
                     />
                   )}
+
                   <p className="text-lg mr-1">{babyName.amountOfLikes} Likes</p>
                 </div>
               </div>

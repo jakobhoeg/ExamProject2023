@@ -3,6 +3,7 @@ export interface User {
     firstName: string;
     email: string;
     partner: User | null;
+    likedBabyNames: BabyName[] | null;
   }
 
 export interface BabyName {
