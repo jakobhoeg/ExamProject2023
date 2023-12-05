@@ -3,7 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.7.34221.43
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BackendAPIMongo", "BackendAPIMongo\BackendAPIMongo.csproj", "{E46B01A0-90FD-4098-9E60-C4E43B0BB482}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BackendAPIMongo", "BackendAPIMongo\BackendAPIMongo.csproj", "{E46B01A0-90FD-4098-9E60-C4E43B0BB482}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NUnitTesting", "NUnitTesting\NUnitTesting.csproj", "{93F05086-3A74-4584-B060-7DBD85DC45FF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AdminClient", "AdminClient\AdminClient.csproj", "{7740A73F-2A51-4049-91CB-7D6F20146971}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +19,14 @@ Global
 		{E46B01A0-90FD-4098-9E60-C4E43B0BB482}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E46B01A0-90FD-4098-9E60-C4E43B0BB482}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E46B01A0-90FD-4098-9E60-C4E43B0BB482}.Release|Any CPU.Build.0 = Release|Any CPU
+		{93F05086-3A74-4584-B060-7DBD85DC45FF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{93F05086-3A74-4584-B060-7DBD85DC45FF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{93F05086-3A74-4584-B060-7DBD85DC45FF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{93F05086-3A74-4584-B060-7DBD85DC45FF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7740A73F-2A51-4049-91CB-7D6F20146971}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7740A73F-2A51-4049-91CB-7D6F20146971}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7740A73F-2A51-4049-91CB-7D6F20146971}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7740A73F-2A51-4049-91CB-7D6F20146971}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
