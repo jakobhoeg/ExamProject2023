@@ -2,7 +2,7 @@ import "../App.css";
 
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthProvider';
-import logo from '/logo.png';
+
 
 
 export default function Navbar() {
@@ -17,11 +17,17 @@ export default function Navbar() {
   return (
     <nav className='absolute top-0 w-full flex items-center justify-between border-b py-6 md:px-8 lg:px-28'>
       <div className='uppercase text-sm flex items-center'>
-      <img src={logo} alt="logo" className='pr-10 cursor-pointer' onClick={
+      {/* <img src={logo} alt="logo" className='pr-10 cursor-pointer' onClick={
         () => {
           window.location.href = '/'
         }
-      }/>
+      }/> */}
+      <p className="text-lg font-medium tracking-tighter mr-12 " onClick={
+        () => {
+          window.location.href = '/'
+        }}>
+          NavneGuiden 2.0
+      </p>
         {pageLinks.map(link => (
           <div key={link.name} className='flex gap-4 '>
             <Link key={link.name} to={link.path} className='flex items-center gap-2'>
