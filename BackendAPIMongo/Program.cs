@@ -157,7 +157,10 @@ app.MapPost("/logout", async (HttpContext ctx) =>
 {
     await ctx.SignOutAsync(AuthScheme);
     return Results.Ok("Logged out succesfully");
-}).RequireAuthorization("user");
+}).RequireAuthorization(builder => builder.RequireAssertion(context =>
+{
+    return context.User.HasClaim("role", "user") || context.User.HasClaim("role", "admin");
+}));
 
 
 app.MapGet("/check-login", async (HttpContext context) =>
@@ -170,7 +173,10 @@ app.MapGet("/check-login", async (HttpContext context) =>
     {
         return Results.Unauthorized();
     }
-}).RequireAuthorization("user");
+}).RequireAuthorization(builder => builder.RequireAssertion(context =>
+{
+    return context.User.HasClaim("role", "user") || context.User.HasClaim("role", "admin");
+}));
 #endregion
 
 // Get User object of logged in user (for profile page)
@@ -196,7 +202,10 @@ app.MapGet("/user", async (IUserRepository iUserRepository, HttpContext context)
         return Results.Unauthorized();
     }
 
-}).RequireAuthorization("user");
+}).RequireAuthorization(builder => builder.RequireAssertion(context =>
+{
+    return context.User.HasClaim("role", "user") || context.User.HasClaim("role", "admin");
+}));
 
 
 app.MapPost("/add-partner", async (IUserRepository iUserRepository, HttpContext context, IMatchedBabyNamesRepository iMatchedBabyNamesRepository) =>
@@ -235,7 +244,10 @@ app.MapPost("/add-partner", async (IUserRepository iUserRepository, HttpContext 
     }
 
     return Results.Unauthorized();
-}).RequireAuthorization("user");
+}).RequireAuthorization(builder => builder.RequireAssertion(context =>
+{
+    return context.User.HasClaim("role", "user") || context.User.HasClaim("role", "admin");
+}));
 
 
 #region BabyName endpoints
@@ -302,7 +314,10 @@ app.MapDelete("/remove-partner", async (IUserRepository iUserRepository, HttpCon
     }
 
     return Results.Unauthorized();
-}).RequireAuthorization("user");
+}).RequireAuthorization(builder => builder.RequireAssertion(context =>
+{
+    return context.User.HasClaim("role", "user") || context.User.HasClaim("role", "admin");
+}));
 
 
 // Likes or dislikes a babyname.
@@ -397,7 +412,10 @@ app.MapPut("/babynames/like", async (IUserRepository iUserRepository, IBabyNameR
     }
 
     return Results.Unauthorized();
-}).RequireAuthorization("user");
+}).RequireAuthorization(builder => builder.RequireAssertion(context =>
+{
+    return context.User.HasClaim("role", "user") || context.User.HasClaim("role", "admin");
+}));
 
 app.MapPut("/update-user-email", async (IUserRepository iUserRepository, HttpContext context) =>
 {
@@ -424,7 +442,10 @@ app.MapPut("/update-user-email", async (IUserRepository iUserRepository, HttpCon
     }
 
     return Results.Unauthorized();
-}).RequireAuthorization("user");
+}).RequireAuthorization(builder => builder.RequireAssertion(context =>
+{
+    return context.User.HasClaim("role", "user") || context.User.HasClaim("role", "admin");
+}));
 
 
 app.MapGet("/matches", async (IUserRepository iUserRepository, IMatchedBabyNamesRepository iMatchedBabyNamesRepository, HttpContext context) =>
@@ -458,7 +479,10 @@ app.MapGet("/matches", async (IUserRepository iUserRepository, IMatchedBabyNames
     }
 
     return Results.Unauthorized();
-}).RequireAuthorization("user"); 
+}).RequireAuthorization(builder => builder.RequireAssertion(context =>
+{
+    return context.User.HasClaim("role", "user") || context.User.HasClaim("role", "admin");
+}));
 
 #region Admin endpoints
 
