@@ -9,6 +9,11 @@ namespace BackendAPIMongo.Repository
     {
         public Task<List<BabyName>> GetBabyNames(int pageIndex);
         public Task<List<BabyName>> GetBabyNames(int pageIndex, bool isMale, bool isFemale, bool isInternational);
+        public Task<List<BabyName>> GetBabyNamesSortedByLikesAsc(int pageIndex, bool isMale, bool isFemale, bool isInternational);
+        public Task<List<BabyName>> GetBabyNamesSortedByLikesDesc(int pageIndex, bool isMale, bool isFemale, bool isInternational);
+        public Task<List<BabyName>> GetBabyNamesSortedByNameAsc(int pageIndex, bool isMale, bool isFemale, bool isInternational);
+        public Task<List<BabyName>> GetBabyNamesSortedByNameDesc(int pageIndex, bool isMale, bool isFemale, bool isInternational);
+
         public Task<long> AddLike(BabyName babyName);
         public Task<long> RemoveLike(BabyName babyName);
     }
@@ -46,6 +51,7 @@ namespace BackendAPIMongo.Repository
             return Task.FromResult(babyNamesList);
         }
 
+        #region Filters and Sorting methods
 
         /// <summary>
         /// Returns the right names based on gender and internationality and uses pagination.
@@ -65,12 +71,87 @@ namespace BackendAPIMongo.Repository
                 & filterBuilder.Eq(b => b.IsInternational, isInternational);
 
             var babyNamesList = _babyNames.Find(filter)
+                                           .SortBy(b => b.Name)
                                            .Skip(skipCount)
                                            .Limit(pageSize)
                                            .ToList();
 
             return Task.FromResult(babyNamesList);
         }
+
+        public Task<List<BabyName>> GetBabyNamesSortedByLikesAsc(int pageIndex, bool isMale, bool isFemale, bool isInternational)
+        {
+            var skipCount = (pageIndex - 1) * pageSize;
+
+            var filterBuilder = Builders<BabyName>.Filter;
+            var filter = filterBuilder.Eq(b => b.IsMale, isMale)
+                & filterBuilder.Eq(b => b.IsFemale, isFemale)
+                & filterBuilder.Eq(b => b.IsInternational, isInternational);
+
+            var babyNamesList = _babyNames.Find(filter)
+                                           .SortBy(b => b.AmountOfLikes)
+                                           .Skip(skipCount)
+                                           .Limit(pageSize)
+                                           .ToList();
+
+            return Task.FromResult(babyNamesList);
+        }
+
+        public Task<List<BabyName>> GetBabyNamesSortedByLikesDesc(int pageIndex, bool isMale, bool isFemale, bool isInternational)
+        {
+            var skipCount = (pageIndex - 1) * pageSize;
+
+            var filterBuilder = Builders<BabyName>.Filter;
+            var filter = filterBuilder.Eq(b => b.IsMale, isMale)
+                & filterBuilder.Eq(b => b.IsFemale, isFemale)
+                & filterBuilder.Eq(b => b.IsInternational, isInternational);
+
+            var babyNamesList = _babyNames.Find(filter)
+                                           .SortByDescending(b => b.AmountOfLikes)
+                                           .Skip(skipCount)
+                                           .Limit(pageSize)
+                                           .ToList();
+
+            return Task.FromResult(babyNamesList);
+        }
+
+        public Task<List<BabyName>> GetBabyNamesSortedByNameAsc(int pageIndex, bool isMale, bool isFemale, bool isInternational)
+        {
+            var skipCount = (pageIndex - 1) * pageSize;
+
+            var filterBuilder = Builders<BabyName>.Filter;
+            var filter = filterBuilder.Eq(b => b.IsMale, isMale)
+                & filterBuilder.Eq(b => b.IsFemale, isFemale)
+                & filterBuilder.Eq(b => b.IsInternational, isInternational);
+
+            var babyNamesList = _babyNames.Find(filter)
+                                           .SortBy(b => b.Name)
+                                           .Skip(skipCount)
+                                           .Limit(pageSize)
+                                           .ToList();
+
+            return Task.FromResult(babyNamesList);
+        }
+
+        public Task<List<BabyName>> GetBabyNamesSortedByNameDesc(int pageIndex, bool isMale, bool isFemale, bool isInternational)
+        {
+            var skipCount = (pageIndex - 1) * pageSize;
+
+            var filterBuilder = Builders<BabyName>.Filter;
+            var filter = filterBuilder.Eq(b => b.IsMale, isMale)
+                & filterBuilder.Eq(b => b.IsFemale, isFemale)
+                & filterBuilder.Eq(b => b.IsInternational, isInternational);
+
+            var babyNamesList = _babyNames.Find(filter)
+                                           .SortByDescending(b => b.Name)
+                                           .Skip(skipCount)
+                                           .Limit(pageSize)
+                                           .ToList();
+
+            return Task.FromResult(babyNamesList);
+        }
+
+        #endregion
 
         /// <summary>
         /// Increments the amount of likes of a babyname by one.
@@ -92,5 +173,7 @@ namespace BackendAPIMongo.Repository
 
             return Task.FromResult(result.ModifiedCount);
         }
+
+
     }
 }

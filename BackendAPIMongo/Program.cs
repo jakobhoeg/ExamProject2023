@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using System.ComponentModel.DataAnnotations;
 using System.Security.Claims;
+using static System.Net.Mime.MediaTypeNames;
 
 var builder = WebApplication.CreateBuilder(args);
 var allowedOrigins = "http://localhost:5173";
@@ -206,14 +207,34 @@ app.MapPost("/add-partner", async (IUserRepository iUserRepository, HttpContext 
 app.MapGet("/babynames", async ([FromQuery] int page, IBabyNameRepository iBabyNameRepository) =>
 {
     var babyNamesList = await iBabyNameRepository.GetBabyNames(page);
+    
+    return Results.Ok(babyNamesList);
+}).AllowAnonymous();
+
+app.MapGet("/babynames/sort/likes/asc", async ([FromQuery] int page, [FromQuery] bool isMale, [FromQuery] bool isFemale, [FromQuery] bool isInternational, IBabyNameRepository iBabyNameRepository) =>
+{
+    var babyNamesList = await iBabyNameRepository.GetBabyNamesSortedByLikesAsc(page, isMale, isFemale, isInternational);
 
     return Results.Ok(babyNamesList);
 }).AllowAnonymous();
 
-
-app.MapGet("/babynames/filter", async ([FromQuery] int page, [FromQuery] bool isMale, [FromQuery] bool isFemale, [FromQuery] bool isInternational, IBabyNameRepository iBabyNameRepository) =>
+app.MapGet("/babynames/sort/likes/desc", async ([FromQuery] int page, [FromQuery] bool isMale, [FromQuery] bool isFemale, [FromQuery] bool isInternational, IBabyNameRepository iBabyNameRepository) =>
 {
-    var babyNamesList = await iBabyNameRepository.GetBabyNames(page, isMale, isFemale, isInternational);
+    var babyNamesList = await iBabyNameRepository.GetBabyNamesSortedByLikesDesc(page, isMale, isFemale, isInternational);
+
+    return Results.Ok(babyNamesList);
+}).AllowAnonymous();
+
+app.MapGet("/babynames/sort/name/asc", async ([FromQuery] int page, [FromQuery] bool isMale, [FromQuery] bool isFemale, [FromQuery] bool isInternational, IBabyNameRepository iBabyNameRepository) =>
+{
+    var babyNamesList = await iBabyNameRepository.GetBabyNamesSortedByNameAsc(page, isMale, isFemale, isInternational);
+
+    return Results.Ok(babyNamesList);
+}).AllowAnonymous();
+
+app.MapGet("/babynames/sort/name/desc", async ([FromQuery] int page, [FromQuery] bool isMale, [FromQuery] bool isFemale, [FromQuery] bool isInternational, IBabyNameRepository iBabyNameRepository) =>
+{
+    var babyNamesList = await iBabyNameRepository.GetBabyNamesSortedByNameDesc(page, isMale, isFemale, isInternational);
 
     return Results.Ok(babyNamesList);
 }).AllowAnonymous();

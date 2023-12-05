@@ -34,7 +34,7 @@ namespace BackendAPIMongo.Repository
 
             _users = database.GetCollection<User>(mongoDBRest.Value.UserCollectionName);
         }
-
+        #region User handling
         /// <summary>
         /// Authenticates user by checking if user exists and if password is correct.
         /// </summary>
@@ -169,7 +169,9 @@ namespace BackendAPIMongo.Repository
 
             return Task.FromResult(true);
         }
+        #endregion
 
+        #region BabyName Like endpoints
         /// <summary>
         /// Add babyname to user's liked babyname list.
         /// </summary>
@@ -205,6 +207,7 @@ namespace BackendAPIMongo.Repository
 
             return Task.FromResult(true);
         }
+        #endregion
 
         /// <summary>
         /// Changes a user's email address.

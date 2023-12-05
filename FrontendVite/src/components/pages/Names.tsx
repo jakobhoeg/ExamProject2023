@@ -39,7 +39,7 @@ export default function Names() {
 
   const getBabyFilter = async (index: number) => {
     try {
-      const url = new URL("http://localhost:5000/babynames/filter");
+      const url = new URL("http://localhost:5000/babynames/sort/name/asc");
       url.searchParams.append("page", index.toString());
       url.searchParams.append("isMale", isMaleFilter.toString());
       url.searchParams.append("isFemale", isFemaleFilter.toString());
@@ -112,7 +112,7 @@ export default function Names() {
       case "female":
         setIsFemaleFilter(!isFemaleFilter);
         if (isInternationalFilter && !isMaleFilter) {
-          setIsInternationalFilter(false); // 
+          setIsInternationalFilter(false); 
         }
         break;
       case "international":
