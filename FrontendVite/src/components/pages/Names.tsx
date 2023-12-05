@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import "../../App.css";
-import { HeartFilledIcon } from "@radix-ui/react-icons";
+import { HeartFilledIcon, HeartIcon } from "@radix-ui/react-icons";
 import MaleIcon from "../MaleIcon";
 import FemaleIcon from "../FemaleIcon";
 import { BabyName } from "../../types/types";
@@ -16,6 +16,7 @@ export default function Names() {
   const [isSwipeMode, setSwipeMode] = useState(false);
   const [isListViewMode, setListViewMode] = useState(true);
   const [sortMethod, setSortMethod] = useState('name/asc');
+  const [likedNames, setLikedNames] = useState<{ [id: string]: boolean }>({});
 
   const getBabyNames = async (index: number) => {
     try {
@@ -152,7 +153,7 @@ export default function Names() {
   }
 
   const handleLikeClick = async (babyName: BabyName) => {
-
+    setLikedNames({ ...likedNames, [babyName.id]: !likedNames[babyName.id] });
     try {
       console.log(babyName);
       const response = await fetch(`http://localhost:5000/babynames/like`, {
@@ -195,7 +196,7 @@ export default function Names() {
             Swipe Mode
           </button>
         </div>
-       
+
         <div className="flex flex-col items-center justify-center w-[550px] gap-4">
           <div className="flex justify-center">
             <h2 className="text-2xl">Opsæt filter</h2>
@@ -223,17 +224,17 @@ export default function Names() {
             </button>
           </div>
           <div>
-          <select
-            onChange={(e) => setSortMethod(e.target.value)}
-            className="border-button"
-          >
-            <option value="name/asc">Sortér alfabetisk (Stigende)</option>
-            <option value="name/desc">Sortér alfabetisk (Faldende)</option>
-            <option value="likes/asc">Sortér efter likes (Stigende)</option>
-            <option value="likes/desc">Sortér efter likes (Faldende)</option>
-          </select>
+            <select
+              onChange={(e) => setSortMethod(e.target.value)}
+              className="border-button"
+            >
+              <option value="name/asc">Sortér alfabetisk (Stigende)</option>
+              <option value="name/desc">Sortér alfabetisk (Faldende)</option>
+              <option value="likes/asc">Sortér efter likes (Stigende)</option>
+              <option value="likes/desc">Sortér efter likes (Faldende)</option>
+            </select>
 
-        </div>
+          </div>
           {babyNames &&
             babyNames.map((babyName) => (
               <div
@@ -256,9 +257,17 @@ export default function Names() {
                 </div>
 
                 <div className="flex items-center">
-                  <HeartFilledIcon className="h-5 w-5 mr-1 text-rose-500 hover:text-rose-400 hover:cursor-pointer"
-                    onClick={() => handleLikeClick(babyName)}
-                  />
+                  {likedNames[babyName.id] ? (
+                    <HeartFilledIcon
+                      className="h-5 w-5 mr-1 text-rose-500 hover:text-rose-400 hover:cursor-pointer"
+                      onClick={() => handleLikeClick(babyName)}
+                    />
+                  ) : (
+                    <HeartIcon
+                      className="h-5 w-5 mr-1 text-rose-500 hover:text-rose-400 hover:cursor-pointer"
+                      onClick={() => handleLikeClick(babyName)}
+                    />
+                  )}
                   <p className="text-lg mr-1">{babyName.amountOfLikes} Likes</p>
                 </div>
               </div>
