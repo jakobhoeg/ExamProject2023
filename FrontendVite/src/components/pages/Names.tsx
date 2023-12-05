@@ -15,14 +15,14 @@ export default function Names() {
   const [isInternationalFilter, setIsInternationalFilter] = useState(false);
   const [isSwipeMode, setSwipeMode] = useState(false);
   const [isListViewMode, setListViewMode] = useState(true);
+  const [sortMethod, setSortMethod] = useState('name/asc');
 
   const getBabyNames = async (index: number) => {
     try {
       const response = await fetch(
-        `http://localhost:5000/babynames?page=${index}`,
+        `http://localhost:5000/babynames/?page=${index}`,
         {
           method: "GET",
-          credentials: "include",
         }
       );
       if (response.ok) {
@@ -39,7 +39,7 @@ export default function Names() {
 
   const getBabyFilter = async (index: number) => {
     try {
-      const url = new URL("http://localhost:5000/babynames/sort/name/asc");
+      const url = new URL(`http://localhost:5000/babynames/sort/${sortMethod}`);
       url.searchParams.append("page", index.toString());
       url.searchParams.append("isMale", isMaleFilter.toString());
       url.searchParams.append("isFemale", isFemaleFilter.toString());
@@ -72,7 +72,7 @@ export default function Names() {
     } else {
       getBabyNames(Number(pageIndex) || 1);
     }
-  }, [isMaleFilter, isFemaleFilter, isInternationalFilter]);
+  }, [isMaleFilter, isFemaleFilter, isInternationalFilter, sortMethod]);
 
   const handleBackClick = () => {
     if (index > 1) {
@@ -106,19 +106,19 @@ export default function Names() {
       case "male":
         setIsMaleFilter(!isMaleFilter);
         if (isInternationalFilter && !isFemaleFilter) {
-          setIsInternationalFilter(false); 
+          setIsInternationalFilter(false);
         }
         break;
       case "female":
         setIsFemaleFilter(!isFemaleFilter);
         if (isInternationalFilter && !isMaleFilter) {
-          setIsInternationalFilter(false); 
+          setIsInternationalFilter(false);
         }
         break;
       case "international":
         if (!isMaleFilter && !isFemaleFilter) {
           setIsInternationalFilter(!isInternationalFilter);
-          setIsMaleFilter(true); 
+          setIsMaleFilter(true);
         } else {
           setIsInternationalFilter(!isInternationalFilter);
         }
@@ -152,7 +152,7 @@ export default function Names() {
   }
 
   const handleLikeClick = async (babyName: BabyName) => {
-    
+
     try {
       console.log(babyName);
       const response = await fetch(`http://localhost:5000/babynames/like`, {
@@ -163,17 +163,17 @@ export default function Names() {
         body: JSON.stringify(babyName),
         credentials: "include",
       });
-  
+
       if (response.ok) {
 
         // Update UI 
         checkFiltersAndFetchNames();
-        
+
       }
     } catch (error) {
       console.error(error);
     }
-};
+  };
 
 
   return (
@@ -195,6 +195,7 @@ export default function Names() {
             Swipe Mode
           </button>
         </div>
+       
         <div className="flex flex-col items-center justify-center w-[550px] gap-4">
           <div className="flex justify-center">
             <h2 className="text-2xl">Opsæt filter</h2>
@@ -221,6 +222,18 @@ export default function Names() {
               Internationalt
             </button>
           </div>
+          <div>
+          <select
+            onChange={(e) => setSortMethod(e.target.value)}
+            className="border-button"
+          >
+            <option value="name/asc">Sortér alfabetisk (Stigende)</option>
+            <option value="name/desc">Sortér alfabetisk (Faldende)</option>
+            <option value="likes/asc">Sortér efter likes (Stigende)</option>
+            <option value="likes/desc">Sortér efter likes (Faldende)</option>
+          </select>
+
+        </div>
           {babyNames &&
             babyNames.map((babyName) => (
               <div
@@ -228,7 +241,7 @@ export default function Names() {
                 className="flex items-center w-full justify-between"
               >
                 <div className="flex items-center gap-2">
-                  {babyName.isMale && babyName.isFemale? (
+                  {babyName.isMale && babyName.isFemale ? (
                     <div className="flex items-center gap-0.5">
                       <MaleIcon />
                       <FemaleIcon />
