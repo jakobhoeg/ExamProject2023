@@ -11,6 +11,7 @@ namespace BackendAPIMongo.Repository
     {
         // Methods mostly intended for users
         public Task<bool> Authenticate(User user);
+        public Task<bool> AuthenticateAdmin(User user);
         public Task Register(User user);
         public Task<User> GetUser(User user);
         public Task AddPartner(User user, string partnerEmail);
@@ -34,6 +35,7 @@ namespace BackendAPIMongo.Repository
 
             _users = database.GetCollection<User>(mongoDBRest.Value.UserCollectionName);
         }
+
         #region User handling
         /// <summary>
         /// Authenticates user by checking if user exists and if password is correct.
@@ -56,6 +58,32 @@ namespace BackendAPIMongo.Repository
             {
                 throw new Exception("Password is incorrect");
             }
+
+            return Task.FromResult(true);
+        }
+
+        public Task<bool> AuthenticateAdmin(User user)
+        {
+            // Check if user exists
+            var userExists = _users.Find(u => u.Email == user.Email).FirstOrDefault();
+
+            // Check if user is admin
+            if (!userExists.IsAdmin)
+            {
+                throw new Exception("User is not admin");
+            }
+
+            if (userExists == null)
+            {
+                throw new Exception("User does not exist");
+            }
+
+            // Check if password is correct (BCrypt)
+            if (!BCrypt.Net.BCrypt.Verify(user.Password, userExists.Password))
+            {
+                throw new Exception("Password is incorrect");
+            }
+
 
             return Task.FromResult(true);
         }

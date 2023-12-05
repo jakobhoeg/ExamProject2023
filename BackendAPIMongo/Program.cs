@@ -32,6 +32,14 @@ builder.Services.AddAuthorization(builder =>
         .AddRequirements()
         .RequireClaim("role", "user");
     });
+
+    builder.AddPolicy("admin", policy =>
+    {
+        policy.RequireAuthenticatedUser()
+        .AddAuthenticationSchemes(AuthScheme)
+        .AddRequirements()
+        .RequireClaim("role", "admin");
+    });
 });
 
 builder.Services.AddCors(options =>
@@ -98,20 +106,48 @@ app.MapPost("/register", async (User user, IUserRepository iUserRepository) =>
 
 app.MapPost("/login", async (User user, IUserRepository iUserRepository, HttpContext ctx) =>
 {
-    // Authenticate user and then create a token
-    if (await iUserRepository.Authenticate(user))
-    {
-        var claims = new List<Claim>
-        {
-            new Claim(ClaimTypes.Email, user.Email),
-            new Claim("role", "user")
-        };
-        var identity = new ClaimsIdentity(claims, AuthScheme);
-        var userIdentity = new ClaimsPrincipal(identity);
+    // get the user from the database to determine if the user is an admin or not
+    var dbUser = await iUserRepository.GetUser(user);
 
-        await ctx.SignInAsync(AuthScheme, userIdentity);
-        return Results.Ok("Logged in succesfully");
+    if (dbUser.IsAdmin)
+    {
+        // Try to login with the user object given in the request body.
+        // Authenticate user as admin and then create a token
+        if (await iUserRepository.AuthenticateAdmin(user))
+        {
+            var claims = new List<Claim>
+            {
+                new Claim(ClaimTypes.Email, user.Email),
+                new Claim("role", "admin")
+            };
+            var identity = new ClaimsIdentity(claims, AuthScheme);
+            var userIdentity = new ClaimsPrincipal(identity);
+
+            await ctx.SignInAsync(AuthScheme, userIdentity);
+            return Results.Ok("Logged in succesfully");
+        }
     }
+
+    if (!dbUser.IsAdmin)
+    {
+        // Try to login with the user object given in the request body.
+        // Authenticate user and then create a token
+        if (await iUserRepository.Authenticate(user))
+        {
+            var claims = new List<Claim>
+            {
+                new Claim(ClaimTypes.Email, user.Email),
+                new Claim("role", "user")
+            };
+            var identity = new ClaimsIdentity(claims, AuthScheme);
+            var userIdentity = new ClaimsPrincipal(identity);
+
+            await ctx.SignInAsync(AuthScheme, userIdentity);
+            return Results.Ok("Logged in succesfully");
+
+        }
+    }
+
     return Results.BadRequest("Invalid username or password");
 
 }).AllowAnonymous();
@@ -438,7 +474,7 @@ app.MapGet("/statistics/user-count", async (IUserRepository iUserRepository, Htt
         return Results.Unauthorized();
     }
 
-}).RequireAuthorization("user"); // TODO: Add admin authorization
+}).RequireAuthorization("admin");
 
 #endregion
 
