@@ -194,7 +194,8 @@ app.MapGet("/user", async (IUserRepository iUserRepository, HttpContext context)
                 user.FirstName,
                 user.IsAdmin,
                 user.Partner,
-                user.LikedBabyNames
+                user.LikedBabyNames,
+                user.CreatedDate
             });
     }
     else
@@ -499,6 +500,29 @@ app.MapGet("/statistics/user-count", async (IUserRepository iUserRepository, Htt
     }
 
 }).RequireAuthorization("admin");
+
+#endregion
+
+#region User Statistics Endpoint
+app.MapGet("/users/count/daily", async (IUserRepository iUserRepository) =>
+{
+    return await iUserRepository.GetNewUsersDailyCountAsync();
+});
+
+app.MapGet("/users/count/weekly", async (IUserRepository iUserRepository) =>
+{
+    return await iUserRepository.GetNewUsersWeeklyCountAsync();
+});
+
+app.MapGet("/users/count/monthly", async (IUserRepository iUserRepository) =>
+{
+    return await iUserRepository.GetNewUsersMonthlyCountAsync();
+});
+
+app.MapGet("/users/count/yearly", async (IUserRepository iUserRepository) =>
+{
+    return await iUserRepository.GetNewUsersYearlyCountAsync();
+});
 
 #endregion
 

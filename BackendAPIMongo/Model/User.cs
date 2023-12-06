@@ -21,6 +21,7 @@ namespace BackendAPIMongo.Model
         public string FirstName { get; set; } = null!;
 
         public bool IsAdmin { get; set; }
+        public DateTime CreatedDate { get; set; }
 
         public User? Partner { get; set; } = null!;
 

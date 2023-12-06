@@ -22,6 +22,12 @@ namespace BackendAPIMongo.Repository
 
         // Admin methods
         public Task<long> GetUserCountAsync();
+
+        // Statistics methods
+        public Task<long> GetNewUsersDailyCountAsync();
+        public Task<long> GetNewUsersWeeklyCountAsync();
+        public Task<long> GetNewUsersMonthlyCountAsync();
+        public Task<long> GetNewUsersYearlyCountAsync();
     }
 
     public class UserRepository : IUserRepository
@@ -104,6 +110,9 @@ namespace BackendAPIMongo.Repository
 
             // Encrypt password using BCrypt
             user.Password = BCrypt.Net.BCrypt.HashPassword(user.Password);
+
+            // Add the timestamp of the created user
+            user.CreatedDate = DateTime.UtcNow;
 
             // Add user to database
             _users.InsertOne(user);
@@ -292,5 +301,43 @@ namespace BackendAPIMongo.Repository
         }
 
         #endregion
+
+
+        #region User Statistics
+
+        public Task<long> GetNewUsersDailyCountAsync()
+        {
+            var startOfDay = DateTime.UtcNow.Date;
+            var endOfDay = startOfDay.AddDays(1);
+            var count = _users.CountDocuments(u => u.CreatedDate >= startOfDay && u.CreatedDate < endOfDay);
+            return Task.FromResult(count);
+        }
+
+        public Task<long> GetNewUsersWeeklyCountAsync()
+        {
+            var startOfWeek = DateTime.UtcNow.Date.AddDays(-(int)DateTime.UtcNow.DayOfWeek);
+            var endOfWeek = startOfWeek.AddDays(7);
+            var count = _users.CountDocuments(u => u.CreatedDate >= startOfWeek && u.CreatedDate < endOfWeek);
+            return Task.FromResult(count);
+        }
+
+        public Task<long> GetNewUsersMonthlyCountAsync()
+        {
+            var startOfMonth = new DateTime(DateTime.UtcNow.Year, DateTime.UtcNow.Month, 1);
+            var endOfMonth = startOfMonth.AddMonths(1);
+            var count = _users.CountDocuments(u => u.CreatedDate >= startOfMonth && u.CreatedDate < endOfMonth);
+            return Task.FromResult(count);
+        }
+
+        public Task<long> GetNewUsersYearlyCountAsync()
+        {
+            var startOfYear = new DateTime(DateTime.UtcNow.Year, 1, 1);
+            var endOfYear = startOfYear.AddYears(1);
+            var count = _users.CountDocuments(u => u.CreatedDate >= startOfYear && u.CreatedDate < endOfYear);
+            return Task.FromResult(count);
+        }
+
+        #endregion
+
     }
 }
