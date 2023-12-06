@@ -260,6 +260,13 @@ app.MapGet("/babynames", async ([FromQuery] int page, IBabyNameRepository iBabyN
     return Results.Ok(babyNamesList);
 }).AllowAnonymous();
 
+app.MapGet("/babynames/international", async ([FromQuery] int page, [FromQuery] bool isInternational, IBabyNameRepository iBabyNameRepository) =>
+{
+    var babyNamesList = await iBabyNameRepository.GetInternationalBabyNames(page, isInternational);
+
+    return Results.Ok(babyNamesList);
+}).AllowAnonymous();
+
 app.MapGet("/babynames/sort/likes/asc", async ([FromQuery] int page, [FromQuery] bool isMale, [FromQuery] bool isFemale, [FromQuery] bool isInternational, IBabyNameRepository iBabyNameRepository) =>
 {
     var babyNamesList = await iBabyNameRepository.GetBabyNamesSortedByLikesAsc(page, isMale, isFemale, isInternational);

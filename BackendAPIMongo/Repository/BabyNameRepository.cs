@@ -9,6 +9,7 @@ namespace BackendAPIMongo.Repository
     {
         public Task<List<BabyName>> GetBabyNames(int pageIndex);
         public Task<List<BabyName>> GetBabyNames(int pageIndex, bool isMale, bool isFemale, bool isInternational);
+        public Task<List<BabyName>> GetInternationalBabyNames(int pageIndex, bool isInternational);
         public Task<List<BabyName>> GetBabyNamesSortedByLikesAsc(int pageIndex, bool isMale, bool isFemale, bool isInternational);
         public Task<List<BabyName>> GetBabyNamesSortedByLikesDesc(int pageIndex, bool isMale, bool isFemale, bool isInternational);
         public Task<List<BabyName>> GetBabyNamesSortedByNameAsc(int pageIndex, bool isMale, bool isFemale, bool isInternational);
@@ -66,9 +67,25 @@ namespace BackendAPIMongo.Repository
             var skipCount = (pageIndex - 1) * pageSize;
 
             var filterBuilder = Builders<BabyName>.Filter;
-            var filter = filterBuilder.Eq(b => b.IsMale, isMale) 
-                & filterBuilder.Eq(b => b.IsFemale, isFemale) 
+            var filter = filterBuilder.Eq(b => b.IsMale, isMale) & 
+                 filterBuilder.Eq(b => b.IsFemale, isFemale) 
                 & filterBuilder.Eq(b => b.IsInternational, isInternational);
+
+            var babyNamesList = _babyNames.Find(filter)
+                                           .SortBy(b => b.Name)
+                                           .Skip(skipCount)
+                                           .Limit(pageSize)
+                                           .ToList();
+
+            return Task.FromResult(babyNamesList);
+        }
+
+        public Task<List<BabyName>> GetInternationalBabyNames(int pageIndex, bool isInternational)
+        {
+            var skipCount = (pageIndex - 1) * pageSize;
+
+            var filterBuilder = Builders<BabyName>.Filter;
+            var filter = filterBuilder.Eq(b => b.IsInternational, isInternational);
 
             var babyNamesList = _babyNames.Find(filter)
                                            .SortBy(b => b.Name)
