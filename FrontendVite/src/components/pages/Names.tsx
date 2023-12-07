@@ -1,10 +1,8 @@
 import { useEffect, useState } from "react";
 import "../../App.css";
-import { HeartFilledIcon, HeartIcon } from "@radix-ui/react-icons";
-import MaleIcon from "../MaleIcon";
-import FemaleIcon from "../FemaleIcon";
 import { BabyName, User } from "../../types/types";
 import { useAuth } from "../../context/AuthProvider";
+import NamesList from "../NamesList";
 
 export default function Names() {
   const [babyNames, setBabyNames] = useState<BabyName[]>([]);
@@ -15,10 +13,11 @@ export default function Names() {
   const [isSwipeMode, setSwipeMode] = useState(false);
   const [isListViewMode, setListViewMode] = useState(true);
   const [sortMethod, setSortMethod] = useState("name/asc");
-  const [likedNames, setLikedNames] = useState<{ [key: string]: boolean }>({});
+  const [lastLikedNameId, setLastLikedNameId] = useState<string | null>(null);
   const [user, setUser] = useState<User | null>(null);
   const { isLoggedIn } = useAuth();
 
+  
   useEffect(() => {
     const getUserInfo = async () => {
       try {
@@ -42,49 +41,30 @@ export default function Names() {
     } else {
       // Update the UI if the user logs out
       setUser(null);
-      setLikedNames({});
+      setLastLikedNameId(null);
     }
-  }, [isLoggedIn, likedNames]);
+  }, [isLoggedIn, lastLikedNameId]);
 
-  const getBabyNames = async (index: number) => {
+  const getBabyData = async (index: number, isFiltering = false) => {
     try {
-      const response = await fetch(
-        `http://localhost:5000/babynames/?page=${index}`,
-        {
-          method: "GET",
-        }
-      );
-      if (response.ok) {
-        const babyNameData = await response.json();
-        console.log(babyNameData);
-        setBabyNames(babyNameData);
-      } else {
-        throw new Error("User not found");
+      const url = isFiltering
+        ? new URL(`http://localhost:5000/babynames/sort/${sortMethod}`)
+        : new URL(`http://localhost:5000/babynames/?page=${index}`);
+  
+      if (isFiltering) {
+        url.searchParams.append("page", index.toString());
+        url.searchParams.append("isMale", isMaleFilter.toString());
+        url.searchParams.append("isFemale", isFemaleFilter.toString());
+        url.searchParams.append("isInternational", isInternationalFilter.toString());
       }
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
-  const getBabyFilter = async (index: number) => {
-    try {
-      const url = new URL(`http://localhost:5000/babynames/sort/${sortMethod}`);
-      url.searchParams.append("page", index.toString());
-      url.searchParams.append("isMale", isMaleFilter.toString());
-      url.searchParams.append("isFemale", isFemaleFilter.toString());
-      url.searchParams.append(
-        "isInternational",
-        isInternationalFilter.toString()
-      );
-
+  
       const response = await fetch(url.toString(), {
         method: "GET",
         credentials: "include",
       });
-
+  
       if (response.ok) {
         const babyNameData = await response.json();
-        console.log(babyNameData);
         setBabyNames(babyNameData);
       } else {
         throw new Error("User not found");
@@ -98,41 +78,25 @@ export default function Names() {
     const url = new URL(window.location.href);
     const pageIndex = url.searchParams.get("page");
     setIndex(Number(pageIndex) || 1);
-
+  
     if (isMaleFilter || isFemaleFilter || isInternationalFilter) {
-      getBabyFilter(Number(pageIndex) || 1);
+      getBabyData(Number(pageIndex) || 1, true);
     } else {
-      getBabyNames(Number(pageIndex) || 1);
+      getBabyData(Number(pageIndex) || 1);
     }
   }, [isMaleFilter, isFemaleFilter, isInternationalFilter, sortMethod]);
 
-  const handleBackClick = () => {
-    if (index > 1) {
-      setIndex(index - 1);
-      window.history.pushState({}, "", `/navne?page=${index - 1}`);
-    } else {
-      setIndex(1);
-      window.history.pushState({}, "", `/navne?page=${1}`);
-    }
-
+  const handlePageClick = (newIndex: number) => {
+    setIndex(newIndex);
+    window.history.pushState({}, "", `/navne?page=${newIndex}`);
+  
     if (isMaleFilter || isFemaleFilter || isInternationalFilter) {
-      getBabyFilter(index - 1);
+      getBabyData(newIndex, true);
     } else {
-      getBabyNames(index - 1);
+      getBabyData(newIndex);
     }
   };
-
-  const handleNextClick = () => {
-    setIndex(index + 1);
-    window.history.pushState({}, "", `/navne?page=${index + 1}`);
-
-    if (isMaleFilter || isFemaleFilter || isInternationalFilter) {
-      getBabyFilter(index + 1);
-    } else {
-      getBabyNames(index + 1);
-    }
-  };
-
+  
   const handleFilterClick = (filter: string) => {
     switch (filter) {
       case "male":
@@ -177,21 +141,14 @@ export default function Names() {
 
   const checkFiltersAndFetchNames = () => {
     if (isMaleFilter || isFemaleFilter || isInternationalFilter) {
-      getBabyFilter(index);
+      getBabyData(index, true);
     } else {
-      getBabyNames(index);
+      getBabyData(index);
     }
   };
 
   const handleLikeClick = async (babyName: BabyName) => {
     try {
-      // Update local state to toggle UI immediately
-      setLikedNames((prevLikedNames) => ({
-        ...prevLikedNames,
-        [babyName.id]: !prevLikedNames[babyName.id],
-      }));
-  
-      // Update DB
       const response = await fetch(`http://localhost:5000/babynames/like`, {
         method: "PUT",
         headers: {
@@ -202,13 +159,23 @@ export default function Names() {
       });
   
       if (response.ok) {
-        // Update UI by fetching the latest list of baby names (with updated likes)
+        // Update state to toggle UI immediately
+        setLastLikedNameId(babyName.id);
+  
+        // Reset local state to null after a short delay
+        setLastLikedNameId(null);
+  
+        // Fetchi the latest list of baby names (with updated likes)
         checkFiltersAndFetchNames();
+      } else {
+        // If the API call fails, handle the error appropriately
+        throw new Error("Something went wrong");
       }
     } catch (error) {
       console.error(error);
     }
   };
+  
   
 
   return (
@@ -229,7 +196,6 @@ export default function Names() {
             Swipe Mode
           </button>
         </div>
-
         <div className="flex flex-col items-center justify-center w-[550px] gap-4">
           <div className="flex justify-center">
             <h2 className="text-2xl">Opsæt filter</h2>
@@ -269,67 +235,22 @@ export default function Names() {
               <option value="likes/desc">Sortér efter likes (Faldende)</option>
             </select>
           </div>
-          {babyNames &&
-            babyNames.map((babyName) => (
-              <div
-                key={babyName.id}
-                className="flex items-center w-full justify-between"
-              >
-                <div className="flex items-center gap-2">
-                  {babyName.isMale && babyName.isFemale ? (
-                    <div className="flex items-center gap-0.5">
-                      <MaleIcon />
-                      <FemaleIcon />
-                    </div>
-                  ) : babyName.isMale ? (
-                    <MaleIcon />
-                  ) : (
-                    <FemaleIcon />
-                  )}
 
-                  <p className="text-lg mr-2">{babyName.name}</p>
-                </div>
-
-                <div className="flex items-center">
-                  {user &&
-                  user.likedBabyNames &&
-                  user.likedBabyNames.some(
-                    (likedName) => likedName.id === babyName.id
-                  ) ? (
-                    <HeartFilledIcon
-                      className="h-5 w-5 mr-1 text-rose-500 hover:text-rose-400 hover:cursor-pointer"
-                      onClick={() => handleLikeClick(babyName)}
-                    />
-                  ) : (
-                    <HeartIcon
-                      className="h-5 w-5 mr-1 text-rose-500 hover:text-rose-400 hover:cursor-pointer"
-                      onClick={() => handleLikeClick(babyName)}
-                    />
-                  )}
-
-                  <p className="text-lg mr-1">{babyName.amountOfLikes} Likes</p>
-                </div>
-              </div>
-            ))}
+          {/* List of names */}
+          <NamesList babyNames={babyNames} user={user} handleLikeClick={handleLikeClick}/>
         </div>
-
+        {/* Back and next buttons */}
         <div className="flex justify-between w-full gap-10 items-center">
           <button
             className="border-button"
-            onClick={() => {
-              handleBackClick();
-            }}
+            onClick={() => handlePageClick(index - 1)}
           >
             Forrige
           </button>
-
           <p>{index}</p>
-
           <button
             className="border-button"
-            onClick={() => {
-              handleNextClick();
-            }}
+            onClick={() => handlePageClick(index + 1)}
           >
             Næste
           </button>
