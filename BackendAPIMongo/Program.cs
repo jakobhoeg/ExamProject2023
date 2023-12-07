@@ -2,6 +2,7 @@ using BackendAPIMongo;
 using BackendAPIMongo.Model;
 using BackendAPIMongo.Repository;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using System.ComponentModel.DataAnnotations;
@@ -293,6 +294,20 @@ app.MapGet("/babynames/sort/name/desc", async ([FromQuery] int page, [FromQuery]
     var babyNamesList = await iBabyNameRepository.GetBabyNamesSortedByNameDesc(page, isMale, isFemale, isInternational);
 
     return Results.Ok(babyNamesList);
+}).AllowAnonymous();
+
+app.MapGet("/babyname/random", async (IBabyNameRepository iBabyNameRepository, IUserRepository iUserRepository, HttpContext context) =>
+{
+    var babyName = await iBabyNameRepository.GetRandomBabyName();
+
+    return Results.Ok(babyName);
+}).AllowAnonymous();
+
+app.MapGet("/babyname/random/sort", async([FromQuery] bool isMale, [FromQuery] bool isFemale, [FromQuery] bool isInternational, IBabyNameRepository iBabyNameRepository, IUserRepository iUserRepository, HttpContext context) =>
+{
+    var babyName = await iBabyNameRepository.GetRandomBabyNameSort(isMale, isFemale, isInternational);
+
+    return Results.Ok(babyName);
 }).AllowAnonymous();
 
 #endregion

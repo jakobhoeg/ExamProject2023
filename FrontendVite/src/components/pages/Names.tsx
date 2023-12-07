@@ -3,6 +3,8 @@ import "../../App.css";
 import { BabyName, User } from "../../types/types";
 import { useAuth } from "../../context/AuthProvider";
 import NamesList from "../NamesList";
+import SwipeList from "../SwipeList";
+import { toast } from "sonner";
 
 export default function Names() {
   const [babyNames, setBabyNames] = useState<BabyName[]>([]);
@@ -16,8 +18,8 @@ export default function Names() {
   const [lastLikedNameId, setLastLikedNameId] = useState<string | null>(null);
   const [user, setUser] = useState<User | null>(null);
   const { isLoggedIn } = useAuth();
+  const [randomBabyName, setRandomBabyName] = useState<BabyName | null>(null);
 
-  
   useEffect(() => {
     const getUserInfo = async () => {
       try {
@@ -50,24 +52,59 @@ export default function Names() {
       const url = isFiltering
         ? new URL(`http://localhost:5000/babynames/sort/${sortMethod}`)
         : new URL(`http://localhost:5000/babynames/?page=${index}`);
-  
+
       if (isFiltering) {
         url.searchParams.append("page", index.toString());
         url.searchParams.append("isMale", isMaleFilter.toString());
         url.searchParams.append("isFemale", isFemaleFilter.toString());
-        url.searchParams.append("isInternational", isInternationalFilter.toString());
+        url.searchParams.append(
+          "isInternational",
+          isInternationalFilter.toString()
+        );
       }
-  
+
       const response = await fetch(url.toString(), {
         method: "GET",
         credentials: "include",
       });
-  
+
       if (response.ok) {
         const babyNameData = await response.json();
         setBabyNames(babyNameData);
       } else {
-        throw new Error("User not found");
+        throw new Error("Name not found");
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const getRandomBabyName = async (isFiltering = false) => {
+    try {
+      let url = new URL("http://localhost:5000/babyname/random");
+
+      if (isSwipeMode && isFiltering) {
+        // Include sorting criteria if in swipemode
+        url = new URL(`http://localhost:5000/babyname/random/sort`);
+        url.searchParams.append("sortMethod", sortMethod);
+        url.searchParams.append("isMale", isMaleFilter.toString());
+        url.searchParams.append("isFemale", isFemaleFilter.toString());
+        url.searchParams.append(
+          "isInternational",
+          isInternationalFilter.toString()
+        );
+      }
+
+      const response = await fetch(url.toString(), {
+        method: "GET",
+        credentials: "include",
+      });
+
+      if (response.ok) {
+        const babyNameData = await response.json();
+        setRandomBabyName(babyNameData);
+      } else {
+        throw new Error("Name not found");
       }
     } catch (error) {
       console.error(error);
@@ -78,25 +115,39 @@ export default function Names() {
     const url = new URL(window.location.href);
     const pageIndex = url.searchParams.get("page");
     setIndex(Number(pageIndex) || 1);
-  
-    if (isMaleFilter || isFemaleFilter || isInternationalFilter) {
-      getBabyData(Number(pageIndex) || 1, true);
+
+    if (isSwipeMode) {
+      if (isMaleFilter || isFemaleFilter || isInternationalFilter) {
+        getRandomBabyName(true);
+      } else {
+        getRandomBabyName();
+      }
     } else {
-      getBabyData(Number(pageIndex) || 1);
+      if (isMaleFilter || isFemaleFilter || isInternationalFilter) {
+        getBabyData(Number(pageIndex) || 1, true);
+      } else {
+        getBabyData(Number(pageIndex) || 1);
+      }
     }
-  }, [isMaleFilter, isFemaleFilter, isInternationalFilter, sortMethod]);
+  }, [
+    isSwipeMode,
+    isMaleFilter,
+    isFemaleFilter,
+    isInternationalFilter,
+    sortMethod,
+  ]);
 
   const handlePageClick = (newIndex: number) => {
     setIndex(newIndex);
     window.history.pushState({}, "", `/navne?page=${newIndex}`);
-  
+
     if (isMaleFilter || isFemaleFilter || isInternationalFilter) {
       getBabyData(newIndex, true);
     } else {
       getBabyData(newIndex);
     }
   };
-  
+
   const handleFilterClick = (filter: string) => {
     switch (filter) {
       case "male":
@@ -152,31 +203,30 @@ export default function Names() {
       const response = await fetch(`http://localhost:5000/babynames/like`, {
         method: "PUT",
         headers: {
-          'Content-Type': 'application/json'
+          "Content-Type": "application/json",
         },
         body: JSON.stringify(babyName),
         credentials: "include",
       });
-  
+
       if (response.ok) {
         // Update state to toggle UI immediately
         setLastLikedNameId(babyName.id);
-  
+
         // Reset local state to null after a short delay
         setLastLikedNameId(null);
-  
+
         // Fetchi the latest list of baby names (with updated likes)
         checkFiltersAndFetchNames();
       } else {
         // If the API call fails, handle the error appropriately
+        toast.error("Du skal være logget ind for at like navne");
         throw new Error("Something went wrong");
       }
     } catch (error) {
       console.error(error);
     }
   };
-  
-  
 
   return (
     <div className="flex flex-col w-screen pt-40 pb-20 justify-center items-center">
@@ -191,7 +241,10 @@ export default function Names() {
           </button>
           <button
             className={`border-button ${isSwipeMode ? "bg-orange-200" : ""}`}
-            onClick={() => handleViewClick("swipe")}
+            onClick={() => {
+              handleViewClick("swipe");
+              getRandomBabyName();
+            }}
           >
             Swipe Mode
           </button>
@@ -224,37 +277,85 @@ export default function Names() {
               Internationalt
             </button>
           </div>
-          <div>
-            <select
-              onChange={(e) => setSortMethod(e.target.value)}
-              className="border-button"
-            >
-              <option value="name/asc">Sortér alfabetisk (Stigende)</option>
-              <option value="name/desc">Sortér alfabetisk (Faldende)</option>
-              <option value="likes/asc">Sortér efter likes (Stigende)</option>
-              <option value="likes/desc">Sortér efter likes (Faldende)</option>
-            </select>
-          </div>
+          {isListViewMode && (
+            <div>
+              <select
+                onChange={(e) => setSortMethod(e.target.value)}
+                className="border-button"
+              >
+                <option value="name/asc">Sortér alfabetisk (Stigende)</option>
+                <option value="name/desc">Sortér alfabetisk (Faldende)</option>
+                <option value="likes/asc">Sortér efter likes (Stigende)</option>
+                <option value="likes/desc">
+                  Sortér efter likes (Faldende)
+                </option>
+              </select>
+            </div>
+          )}
 
           {/* List of names */}
-          <NamesList babyNames={babyNames} user={user} handleLikeClick={handleLikeClick}/>
+          {isListViewMode && (
+            <NamesList
+              babyNames={babyNames}
+              user={user}
+              handleLikeClick={handleLikeClick}
+            />
+          )}
+
+          {/* Swipe mode */}
+          {isSwipeMode && (
+            <SwipeList
+              babyName={randomBabyName}
+              user={user}
+              handleLikeClick={handleLikeClick}
+            />
+          )}
         </div>
-        {/* Back and next buttons */}
-        <div className="flex justify-between w-full gap-10 items-center">
-          <button
-            className="border-button"
-            onClick={() => handlePageClick(index - 1)}
-          >
-            Forrige
-          </button>
-          <p>{index}</p>
-          <button
-            className="border-button"
-            onClick={() => handlePageClick(index + 1)}
-          >
-            Næste
-          </button>
-        </div>
+        {/* List mode buttons */}
+        {isListViewMode && (
+          <div className="flex justify-between w-full gap-10 items-center">
+            <button
+              className="border-button"
+              onClick={() => handlePageClick(index - 1)}
+            >
+              Forrige
+            </button>
+            <p>{index}</p>
+            <button
+              className="border-button"
+              onClick={() => handlePageClick(index + 1)}
+            >
+              Næste
+            </button>
+          </div>
+        )}
+
+        {/* Swipe buttons */}
+        {isSwipeMode && (
+          <div className="flex w-1/2 justify-between">
+            <button
+              className="border-button"
+              onClick={() => {
+                getRandomBabyName(
+                  isMaleFilter || isFemaleFilter || isInternationalFilter
+                );
+              }}
+            >
+              Skip
+            </button>
+            <button
+              className="border-button"
+              onClick={() => {
+                getRandomBabyName(
+                  isMaleFilter || isFemaleFilter || isInternationalFilter
+                );
+                handleLikeClick(randomBabyName!);
+              }}
+            >
+              Like
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );

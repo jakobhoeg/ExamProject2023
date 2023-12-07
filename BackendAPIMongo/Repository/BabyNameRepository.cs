@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Options;
 using MongoDB.Driver;
 using System.Diagnostics;
+using System.Runtime.ConstrainedExecution;
 
 namespace BackendAPIMongo.Repository
 {
@@ -14,6 +15,8 @@ namespace BackendAPIMongo.Repository
         public Task<List<BabyName>> GetBabyNamesSortedByLikesDesc(int pageIndex, bool isMale, bool isFemale, bool isInternational);
         public Task<List<BabyName>> GetBabyNamesSortedByNameAsc(int pageIndex, bool isMale, bool isFemale, bool isInternational);
         public Task<List<BabyName>> GetBabyNamesSortedByNameDesc(int pageIndex, bool isMale, bool isFemale, bool isInternational);
+        public Task<BabyName> GetRandomBabyName();
+        public Task<BabyName> GetRandomBabyNameSort(bool isMale, bool isFemale, bool isInternational);
 
         public Task<long> AddLike(BabyName babyName);
         public Task<long> RemoveLike(BabyName babyName);
@@ -183,12 +186,62 @@ namespace BackendAPIMongo.Repository
             return Task.FromResult(result.ModifiedCount);
         }
 
+        /// <summary>
+        /// Decrements the amount of likes of a babyname by one.
+        /// </summary>
+        /// <param name="babyName"></param>
+        /// <returns></returns>
         public Task<long> RemoveLike(BabyName babyName)
         {
             var update = Builders<BabyName>.Update.Inc(bn => bn.AmountOfLikes, -1);
             var result = _babyNames.UpdateOne(bn => bn.Name == babyName.Name, update);
 
             return Task.FromResult(result.ModifiedCount);
+        }
+
+        /// <summary>
+        /// Returns a random babyname from the database.
+        /// </summary>
+        /// <param name="user"></param>
+        /// <param name="partner"></param>
+        /// <returns></returns>
+        public Task<BabyName> GetRandomBabyName()
+        { 
+            var random = new Random();
+            var randomIndex = random.Next(0, (int)_babyNames.CountDocuments(bn => true));
+
+            var babyName = _babyNames.Find(bn => true)
+                                    .Skip(randomIndex)
+                                    .Limit(1)
+                                    .FirstOrDefault();
+
+            return Task.FromResult(babyName);
+        }
+
+        public Task<BabyName> GetRandomBabyNameSort(bool isMale, bool isFemale, bool isInternational)
+        {
+            var filterBuilder = Builders<BabyName>.Filter;
+            var filter = filterBuilder.Eq(b => b.IsMale, isMale)
+                & filterBuilder.Eq(b => b.IsFemale, isFemale)
+                & filterBuilder.Eq(b => b.IsInternational, isInternational);
+
+            var babyNames = _babyNames.Find(filter).ToList();
+
+            if (babyNames.Any())
+            {
+                var random = new Random();
+                var randomIndex = random.Next(0, babyNames.Count);
+
+                var randomBabyName = babyNames[randomIndex];
+
+                return Task.FromResult(randomBabyName);
+            }
+            else
+            {
+                return Task.FromResult<BabyName>(null);
+            }
+
+
         }
 
 
