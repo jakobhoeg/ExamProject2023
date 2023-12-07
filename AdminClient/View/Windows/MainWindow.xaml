@@ -1,0 +1,47 @@
+﻿<ui:UiWindow x:Class="AdminClient.View.Windows.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:AdminClient.View.Windows"
+        xmlns:viewPages="clr-namespace:AdminClient.View.Pages"
+        xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+        mc:Ignorable="d"
+        WindowCornerPreference="Round"
+        WindowStartupLocation="CenterScreen"
+        Title="MainWindow" Height="650" Width="1100">
+
+    <Window.Resources>
+        <DataTemplate x:Key="LoginView"  >
+            <viewPages:LoginView />
+        </DataTemplate>
+    </Window.Resources>
+
+
+    <DockPanel Background="{ui:ThemeResource}">
+        <StackPanel Width="75">
+            <ListView Width="75" Height="479" Margin="0,10,0,0"  SelectedItem="homeBtn" >
+                <ListViewItem Name="homeBtn" Width="75">
+                    <StackPanel Orientation="Vertical" HorizontalAlignment="Center" Height="52">
+                        <ui:SymbolIcon FontSize="24" Symbol="Home20" />
+                        <TextBlock Margin="10" FontSize="11" >Login</TextBlock>
+                    </StackPanel>
+                </ListViewItem>
+            
+                
+
+            </ListView>
+
+            <StackPanel MaxWidth="180" >
+                
+            </StackPanel>
+        </StackPanel>
+        <Grid>
+            <ContentControl x:Name="pageContent" Content="{Binding}" ContentTemplate="{StaticResource LoginView}" Margin="6,10,0,0" />
+        </Grid>
+
+
+
+
+    </DockPanel>
+</ui:UiWindow>
