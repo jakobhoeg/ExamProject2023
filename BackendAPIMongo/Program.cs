@@ -16,11 +16,6 @@ var globalAllowedOrigins = "http://51.20.138.229:3000";
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.WebHost.UseKestrel(options =>
-{
-    options.ListenAnyIP(5000, listenOptions => listenOptions.UseHttps());  // HTTPS
-});
-
 const string AuthScheme = "token";
 
 builder.Services.AddAuthentication(AuthScheme)
@@ -85,6 +80,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+app.UseHttpsRedirection();
 
 app.UseCors(globalAllowedOrigins);
 
