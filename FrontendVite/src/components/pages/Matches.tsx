@@ -13,7 +13,7 @@ export default function Matches() {
   useEffect(() => {
     const getMatches = async () => {
       try {
-        const response = await fetch("http://localhost:5000/matches", {
+        const response = await fetch("http://51.20.138.229:5000/matches", {
           method: "GET",
           credentials: "include",
         });

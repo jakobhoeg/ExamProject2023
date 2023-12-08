@@ -10,7 +10,7 @@ export default function Profile() {
   useEffect(() => {
     const getUserInfo = async () => {
       try {
-        const response = await fetch("http://localhost:5000/user", {
+        const response = await fetch("http://51.20.138.229:5000/user", {
           method: "GET",
           credentials: "include",
         });
@@ -44,7 +44,7 @@ export default function Profile() {
     const updatedFormData = { email: partnerEmail || "" };
 
     try {
-      const response = await fetch("http://localhost:5000/remove-partner", {
+      const response = await fetch("http://51.20.138.229:5000/remove-partner", {
         method: "DELETE",
         credentials: "include",
         headers: {
