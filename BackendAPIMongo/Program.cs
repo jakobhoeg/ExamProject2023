@@ -82,7 +82,8 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-app.UseCors(allowedOrigins);
+app.UseCors(globalAllowedOrigins);
+
 app.UseAuthentication();
 app.UseAuthorization();
 
