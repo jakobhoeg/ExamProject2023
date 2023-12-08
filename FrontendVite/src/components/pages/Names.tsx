@@ -20,6 +20,7 @@ export default function Names() {
   const { isLoggedIn } = useAuth();
   const [randomBabyName, setRandomBabyName] = useState<BabyName | null>(null);
 
+//#region Functions
   useEffect(() => {
     const getUserInfo = async () => {
       try {
@@ -111,6 +112,14 @@ export default function Names() {
     }
   };
 
+  const checkFiltersAndFetchNames = () => {
+    if (isMaleFilter || isFemaleFilter || isInternationalFilter) {
+      getBabyData(index, true);
+    } else {
+      getBabyData(index);
+    }
+  };
+
   useEffect(() => {
     const url = new URL(window.location.href);
     const pageIndex = url.searchParams.get("page");
@@ -137,6 +146,9 @@ export default function Names() {
     sortMethod,
   ]);
 
+  //#endregion
+
+//#region Event handling
   const handlePageClick = (newIndex: number) => {
     setIndex(newIndex);
     window.history.pushState({}, "", `/navne?page=${newIndex}`);
@@ -190,13 +202,7 @@ export default function Names() {
     }
   };
 
-  const checkFiltersAndFetchNames = () => {
-    if (isMaleFilter || isFemaleFilter || isInternationalFilter) {
-      getBabyData(index, true);
-    } else {
-      getBabyData(index);
-    }
-  };
+
 
   const handleLikeClick = async (babyName: BabyName) => {
     try {
@@ -227,7 +233,9 @@ export default function Names() {
       console.error(error);
     }
   };
-
+  //#endregion
+  
+//#region HTML
   return (
     <div className="flex flex-col w-screen pt-40 pb-20 justify-center items-center">
       <div className="flex flex-col justify-center items-center gap-8">
@@ -359,4 +367,5 @@ export default function Names() {
       </div>
     </div>
   );
+  //#endregion
 }
