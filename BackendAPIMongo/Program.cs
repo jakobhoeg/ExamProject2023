@@ -11,6 +11,7 @@ using static System.Net.Mime.MediaTypeNames;
 
 var builder = WebApplication.CreateBuilder(args);
 var allowedOrigins = "http://localhost:5173";
+var globalAllowedOrigins = "http://51.20.138.229:3000";
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -49,6 +50,15 @@ builder.Services.AddCors(options =>
         policy =>
         {
             policy.WithOrigins(allowedOrigins)
+            .AllowAnyHeader()
+            .AllowAnyMethod()
+            .AllowCredentials();
+        });
+
+    options.AddPolicy(name: globalAllowedOrigins,
+        policy =>
+        {
+            policy.WithOrigins(globalAllowedOrigins)
             .AllowAnyHeader()
             .AllowAnyMethod()
             .AllowCredentials();
