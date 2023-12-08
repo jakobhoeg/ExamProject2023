@@ -16,8 +16,6 @@ pipeline {
                 script {
                     // Build the NUnit testing project and run tests
                     dir('NUnitTesting') {
-                        sh 'dotnet restore'
-                        sh 'dotnet build'
                         sh 'dotnet test'
                     }
                 }
