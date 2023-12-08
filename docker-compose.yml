@@ -23,5 +23,12 @@ services:
     depends_on:
       - mongohost
 
+  vite-frontend:
+    build: ./FrontendVite
+    restart: always
+    container_name: vite-frontend
+    ports:
+      - 3000:5173
+
 volumes:
   mongo:
