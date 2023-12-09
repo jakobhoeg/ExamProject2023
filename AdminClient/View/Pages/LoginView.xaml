@@ -6,9 +6,9 @@
       xmlns:local="clr-namespace:AdminClient.View.Pages"
       xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
       mc:Ignorable="d" 
-      d:DesignHeight="450" d:DesignWidth="800"
+      d:DesignHeight="580" d:DesignWidth="800"
       Background="Transparent"
-             Height="450" Width="800">
+             Height="580" Width="800">
 
     <UserControl.Resources>
         <ResourceDictionary>
@@ -20,7 +20,7 @@
         </ResourceDictionary>
     </UserControl.Resources>
     
-    <Grid>
+    <Grid HorizontalAlignment="Center" VerticalAlignment="Center">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
@@ -34,16 +34,14 @@
         </Grid.ColumnDefinitions>
 
         <Label Content="Email:" Grid.Row="0" Grid.Column="0"  Margin="10,10,0,10" VerticalAlignment="Center"/>
-        <ui:TextBox x:Name="EmailTextBox" Width="400" Grid.Column="1" Margin="0,10,0,10" Grid.Row="0"/>
+        <ui:TextBox x:Name="EmailTextBox" Width="400" Grid.Column="1" Margin="0,10,0,10" Grid.Row="0" Text="{Binding Path=Email, UpdateSourceTrigger=PropertyChanged}"/>
 
         <Label Content="Password:" Grid.Row="1" Grid.Column="0" Margin="10,10,0,10" VerticalAlignment="Center" />
-        <ui:PasswordBox x:Name="PasswordTextBox" Width="400" Grid.Column="1" Margin="0,10,0,10" Grid.Row="1"/>
+        <ui:PasswordBox x:Name="PasswordBox" Width="400" Grid.Column="1" Margin="0,10,0,10" Grid.Row="1" PasswordChanged="PasswordBox_PasswordChanged"/>
 
-        <Border Background="{DynamicResource Color1}" CornerRadius="10" Margin="0,10,0,10" Width="400"  Grid.Row="3" Grid.Column="1"> 
-            
-            <!-- Adjust the CornerRadius value as needed -->
-            <!-- Adjust the CornerRadius value as needed -->
-            <ui:Button HorizontalAlignment="Center" Content="Login" />
+        <Border CornerRadius="10" Margin="0,10,0,10" Width="400"  Grid.Row="3" Grid.Column="1">
+
+            <ui:Button HorizontalAlignment="Center" Content="Login" Width="400" Command="{Binding LoginCommand}" />
         </Border>
     </Grid>
 </UserControl>
