@@ -20,8 +20,8 @@
 
     <DockPanel Background="{ui:ThemeResource}">
         <StackPanel Width="75">
-            <ListView Width="75" Height="479" Margin="0,10,0,0"  SelectedItem="homeBtn" >
-                <ListViewItem Name="homeBtn" Width="75">
+            <ListView Width="75" Height="479" Margin="0,10,0,0"  SelectedItem="loginBtn" >
+                <ListViewItem Name="loginBtn" Width="75">
                     <StackPanel Orientation="Vertical" HorizontalAlignment="Center" Height="52">
                         <ui:SymbolIcon FontSize="24" Symbol="Home20" />
                         <TextBlock Margin="10" FontSize="11" >Login</TextBlock>

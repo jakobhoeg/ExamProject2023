@@ -16,6 +16,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="WPF-UI" Version="2.1.0" />
   </ItemGroup>
 
@@ -26,7 +27,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="ViewModel\Pages\" />
     <Folder Include="ViewModel\Windows\" />
   </ItemGroup>
 
