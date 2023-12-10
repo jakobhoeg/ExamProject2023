@@ -1,4 +1,6 @@
 ﻿using AdminClient.Command;
+using AdminClient.Models;
+using AdminClient.Services;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -60,60 +62,29 @@ namespace AdminClient.ViewModel.Pages
 
         public async Task<bool> LoginAsync()
         {
-
             var loginData = new
             {
                 Email = Email,
                 Password = _password
             };
 
-            // Convert loginData to JSON
-            string jsonData = JsonConvert.SerializeObject(loginData);
+            var authService = new AuthenticationService();
+            User loggedInUser = await authService.LoginAsync(JsonConvert.SerializeObject(loginData));
 
-            // Set up HttpClient
-            using (HttpClient client = new HttpClient())
+            if (loggedInUser != null)
             {
-                // Set the base URL for the API
-                client.BaseAddress = new Uri("http://localhost:5000/");
-
-                // Set the content type to JSON
-                client.DefaultRequestHeaders.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json"));
-                
-                // Create the request body as StringContent
-                var body = new StringContent(jsonData, Encoding.UTF8, "application/json");
-
-                try
-                {
-                    // Make the POST request to the login endpoint
-                    HttpResponseMessage response = await client.PostAsync("login", body);
-                    Debug.WriteLine(response);
-
-                    // Check if the request was successful
-                    if (response.IsSuccessStatusCode)
-                    {
-                        
-
-                        string responseContent = await response.Content.ReadAsStringAsync();
-                        Debug.WriteLine(responseContent);
-                        return true; // Login successful
-                    }
-                    else
-                    {
-                        // Unsuccessful login logic here
-                        // For example, you might display an error message based on the response status code
-                        Debug.WriteLine($"Login failed. Status code: {response.StatusCode}");
-                        return false; // Login failed
-                    }
-                }
-                catch (Exception ex)
-                {
-                    // Handle exception (e.g., network error)
-                    Debug.WriteLine($"Error: {ex.Message}");
-                    return false; // Login failed
-                }
+                // Successfully logged in, you can use loggedInUser throughout your application
+                Debug.WriteLine($"Login successful. Welcome, {loggedInUser.Email}!");
+                // Additional logic based on the user, such as navigating to a different page
+                return true;
+            }
+            else
+            {
+                Debug.WriteLine("Login failed.");
+                return false;
             }
         }
 
-        
+
     }
 }

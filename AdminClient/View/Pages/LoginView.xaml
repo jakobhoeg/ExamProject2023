@@ -6,21 +6,21 @@
       xmlns:local="clr-namespace:AdminClient.View.Pages"
       xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
       mc:Ignorable="d" 
-      d:DesignHeight="580" d:DesignWidth="800"
-      Background="Transparent"
-             Height="580" Width="800">
+      d:DesignHeight="600" d:DesignWidth="1020"
+      Background="Transparent">
 
     <UserControl.Resources>
         <ResourceDictionary>
-            <SolidColorBrush x:Key="Color1">#FCFDFC</SolidColorBrush>
             <Style TargetType="{x:Type Label}">
                 <Setter Property="Foreground" Value="Black"/>
                 <Setter Property="FontFamily" Value="Roboto"/>
             </Style>
         </ResourceDictionary>
     </UserControl.Resources>
-    
-    <Grid HorizontalAlignment="Center" VerticalAlignment="Center">
+
+    <Border CornerRadius="15" Background="{StaticResource UserControlBG}" Grid.Row="3" Grid.Column="1">
+
+        <Grid HorizontalAlignment="Center" VerticalAlignment="Center">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
@@ -44,4 +44,5 @@
             <ui:Button HorizontalAlignment="Center" Content="Login" Width="400" Command="{Binding LoginCommand}" />
         </Border>
     </Grid>
+    </Border>
 </UserControl>

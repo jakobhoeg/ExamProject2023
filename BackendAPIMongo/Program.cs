@@ -136,7 +136,7 @@ app.MapPost("/login", async (User user, IUserRepository iUserRepository, HttpCon
             var userIdentity = new ClaimsPrincipal(identity);
 
             await ctx.SignInAsync(AuthScheme, userIdentity);
-            return Results.Ok("Logged in succesfully");
+            return Results.Ok(dbUser);
         }
     }
 
@@ -155,7 +155,7 @@ app.MapPost("/login", async (User user, IUserRepository iUserRepository, HttpCon
             var userIdentity = new ClaimsPrincipal(identity);
 
             await ctx.SignInAsync(AuthScheme, userIdentity);
-            return Results.Ok("Logged in succesfully");
+            return Results.Ok(dbUser);
 
         }
     }
