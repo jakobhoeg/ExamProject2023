@@ -69,7 +69,7 @@ namespace AdminClient.ViewModel.Pages
                 Password = _password
             };
 
-            var authService = new AuthenticationService();
+            var authService = AuthenticationService.Instance;
             User loggedInUser = await authService.LoginAsync(JsonConvert.SerializeObject(loginData));
 
             if (loggedInUser != null)

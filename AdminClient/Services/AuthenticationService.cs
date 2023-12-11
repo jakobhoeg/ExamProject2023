@@ -12,11 +12,16 @@ namespace AdminClient.Services
 {
     public class AuthenticationService
     {
-        public HttpClient _httpClient;
+        private static readonly AuthenticationService instance = new AuthenticationService();
+
+        public static AuthenticationService Instance => instance;
+
+        public HttpClient _httpClient { get; }
         public User User { get; set; }
+        public string AccessToken { get; set; }
 
 
-        public AuthenticationService()
+        private AuthenticationService()
         {
             var cookieContainer = new System.Net.CookieContainer();
             var handler = new HttpClientHandler
@@ -40,12 +45,14 @@ namespace AdminClient.Services
                 // Check if the request was successful
                 if (response.IsSuccessStatusCode)
                 {
-                    // Store the received cookies
+                    // Get the access token from the response cookie
                     var cookie = response.Headers.GetValues("Set-Cookie").FirstOrDefault();
 
+                    // Get body from response and deserialize it to a User object
                     string responseContent = await response.Content.ReadAsStringAsync();
-
                     User = JsonConvert.DeserializeObject<User>(responseContent);
+
+                    AccessToken = cookie;
 
                     return User;
                 }

@@ -6,20 +6,22 @@
              xmlns:local="clr-namespace:AdminClient.View.Pages" xmlns:pages="clr-namespace:AdminClient.ViewModel.Pages" d:DataContext="{d:DesignInstance Type=pages:HomeViewModel}"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
-    <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="*" />
-            <RowDefinition Height="*" />
-            <RowDefinition Height="*" />
-            <RowDefinition Height="*" />
-        </Grid.RowDefinitions>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="auto"/>
-            <ColumnDefinition Width="auto"/>
-        </Grid.ColumnDefinitions>
+    <Border CornerRadius="15" Background="{StaticResource UserControlBG}" Grid.Row="3" Grid.Column="1">
 
-        <TextBlock Text="Statistik - Brugerregistreringer" 
+        <Grid HorizontalAlignment="Center" Margin="0,20,0,20">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="auto"/>
+                <ColumnDefinition Width="auto"/>
+            </Grid.ColumnDefinitions>
+
+            <TextBlock Text="Statistik - Brugerregistreringer" 
                    FontWeight="Medium" 
                    FontSize="20" 
                    Grid.Row="0" 
@@ -27,57 +29,58 @@
                    HorizontalAlignment="Center" 
                    VerticalAlignment="Center"/>
 
-        <TextBlock Text="Nye brugere - dagligt:" 
+            <TextBlock Text="Nye brugere - dagligt:" 
                    Grid.Row="1" 
                    Grid.Column="0" 
                    VerticalAlignment="Center" 
                    HorizontalAlignment="Left" />
-        
-        <TextBlock Text="Nye brugere - ugentligt:" 
+
+            <TextBlock Text="Nye brugere - ugentligt:" 
                    Grid.Row="2" 
                    Grid.Column="0" 
                    VerticalAlignment="Center" 
                    HorizontalAlignment="Left"/>
-        
-        <TextBlock Text="Nye brugere - månedligt:" 
+
+            <TextBlock Text="Nye brugere - månedligt:" 
                    Grid.Row="3" 
                    Grid.Column="0"  
                    VerticalAlignment="Center" 
                    HorizontalAlignment="Left"/>
-        
-        <TextBlock Text="Nye brugere - årligt:" 
+
+            <TextBlock Text="Nye brugere - årligt:" 
                    Grid.Row="4" 
                    Grid.Column="0"  
                    VerticalAlignment="Center" 
                    HorizontalAlignment="Left"/>
 
-        <TextBlock x:Name="DailyCountText" 
+            <TextBlock x:Name="DailyCountText" 
                    Grid.Row="1" 
                    Grid.Column="0"  
                    VerticalAlignment="Center" 
                    Margin="200,0,0,0"  
                    Text="{Binding DailyCount}"/>
-        
-        <TextBlock x:Name="WeeklyCountText" 
+
+            <TextBlock x:Name="WeeklyCountText" 
                    Grid.Row="2" 
                    Grid.Column="0"  
                    VerticalAlignment="Center" 
                    Margin="200,0,0,0" 
                    Text="{Binding WeeklyCount}"/>
-        
-        <TextBlock x:Name="MonthlyCountText" 
+
+            <TextBlock x:Name="MonthlyCountText" 
                    Grid.Row="3" 
                    Grid.Column="0"  
                    VerticalAlignment="Center" 
                    Margin="200,0,0,0" 
                    Text="{Binding MonthlyCount}"/>
-        
-        <TextBlock x:Name="YearlyCountText" 
+
+            <TextBlock x:Name="YearlyCountText" 
                    Grid.Row="4" 
                    Grid.Column="0"  
                    VerticalAlignment="Center" 
                    Margin="200,0,0,0" 
                    Text="{Binding YearlyCount}"/>
-        
-    </Grid>
+
+        </Grid>
+    </Border>
 </UserControl>

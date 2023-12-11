@@ -66,23 +66,21 @@ namespace AdminClient.ViewModel.Pages
 
         private async Task<string> MakeGetRequest(string endpoint)
         {
-            var authService = new AuthenticationService();
+            var authService = AuthenticationService.Instance;
 
-            using (authService._httpClient)
+            var response = await authService._httpClient.GetAsync("http://16.170.143.117:5000" + endpoint);
+            Debug.WriteLine(response);
+            if (response.IsSuccessStatusCode)
             {
-                var response = await authService._httpClient.GetAsync("http://16.170.143.117:5000" + endpoint);
-                Debug.WriteLine(response);
-                if (response.IsSuccessStatusCode)
-                {
-                    var count = await response.Content.ReadAsStringAsync();
-                    Debug.WriteLine(count);
-                    return count;
-                }
-                else
-                {
-                    return "N/A";
-                }
+                var count = await response.Content.ReadAsStringAsync();
+                Debug.WriteLine(count);
+                return count;
             }
+            else
+            {
+                return "N/A";
+            }
+
         }
 
         protected virtual void OnPropertyChanged(string propertyName)

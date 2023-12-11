@@ -12,10 +12,11 @@ namespace AdminClient.View.Windows
     {
         public MainWindow()
         {
+            InitializeComponent();
+
+            // Styling
             Color color = Colors.MediumVioletRed;
             Wpf.Ui.Appearance.Accent.Apply(color);
-
-            InitializeComponent();
 
             WindowStartupLocation = WindowStartupLocation.CenterScreen;
 
@@ -23,13 +24,17 @@ namespace AdminClient.View.Windows
             var loginView = new LoginView();
             pageContent.Content = loginView;
 
+            // Subscribe/bind to the SuccessfulLogin event
             loginView.ViewModel.SuccessfulLogin += OnSuccessfulLogin;
-
         }
 
         private void OnSuccessfulLogin(object sender, EventArgs e)
         {
             pageContent.Content = new HomeView();
+            loginBtn.IsSelected = false;
+            loginBtn.IsEnabled = false;
+            homeBtn.IsSelected = true;
+            homeBtn.IsEnabled = true;
         }
     }
 }
