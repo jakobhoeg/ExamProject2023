@@ -52,6 +52,12 @@ namespace AdminClient.Services
                     string responseContent = await response.Content.ReadAsStringAsync();
                     User = JsonConvert.DeserializeObject<User>(responseContent);
 
+                    if (User.IsAdmin == false)
+                    {
+                        Debug.WriteLine("User is not an admin");
+                        return null;
+                    }
+
                     AccessToken = cookie;
 
                     return User;

@@ -91,11 +91,19 @@ app.UseAuthorization();
 #region Authentication endpoints
 app.MapPost("/register", async (User user, IUserRepository iUserRepository) =>
 {
+    // Only allow theses properties to be set when registering a user (prevent users from setting their own role)
+    var registrationUser = new User
+    {
+        Email = user.Email,
+        Password = user.Password,
+        FirstName = user.FirstName,
+    };
+
     // This is used to validate the user object (typesafety).
     // Example: if user.Email is not an email, it will return an error
-    var validationContext = new ValidationContext(user, serviceProvider: null, items: null);
+    var validationContext = new ValidationContext(registrationUser, serviceProvider: null, items: null);
     var validationResults = new List<ValidationResult>();
-    var isValid = Validator.TryValidateObject(user, validationContext, validationResults, true);
+    var isValid = Validator.TryValidateObject(registrationUser, validationContext, validationResults, true);
 
     if (!isValid)
     {
@@ -105,7 +113,7 @@ app.MapPost("/register", async (User user, IUserRepository iUserRepository) =>
     // Register user after validation
     try
     {
-        await iUserRepository.Register(user);
+        await iUserRepository.Register(registrationUser);
         return Results.Ok("User registered succesfully");
     }
     catch (Exception e)
