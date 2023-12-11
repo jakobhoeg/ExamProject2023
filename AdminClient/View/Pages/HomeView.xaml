@@ -19,15 +19,65 @@
             <ColumnDefinition Width="auto"/>
         </Grid.ColumnDefinitions>
 
-        <TextBlock Text="Statistik - Brugerregistreringer" FontWeight="Medium" FontSize="20" Grid.Row="0" Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-        <TextBlock Text="Nye brugere - dagligt" Grid.Row="1" Grid.Column="0" VerticalAlignment="Center" />
-        <TextBlock Text="Nye brugere - ugentligt" Grid.Row="2" Grid.Column="0" VerticalAlignment="Center" />
-        <TextBlock Text="Nye brugere - månedligt" Grid.Row="3" Grid.Column="0"  VerticalAlignment="Center" />
-        <TextBlock Text="Nye brugere - årligt" Grid.Row="4" Grid.Column="0"  VerticalAlignment="Center" />
+        <TextBlock Text="Statistik - Brugerregistreringer" 
+                   FontWeight="Medium" 
+                   FontSize="20" 
+                   Grid.Row="0" 
+                   Grid.Column="0" 
+                   HorizontalAlignment="Center" 
+                   VerticalAlignment="Center"/>
 
-        <TextBlock x:Name="DailyCountText" Grid.Row="1" Grid.Column="0"  VerticalAlignment="Center" Text="{Binding DailyCount}"/>
-        <TextBlock x:Name="WeeklyCountText" Grid.Row="2" Grid.Column="0"  VerticalAlignment="Center" Text="{Binding WeeklyCount}"/>
-        <TextBlock x:Name="MonthlyCountText" Grid.Row="3" Grid.Column="0"  VerticalAlignment="Center" Text="{Binding MonthlyCount}"/>
-        <TextBlock x:Name="YearlyCountText" Grid.Row="4" Grid.Column="0"  VerticalAlignment="Center" Text="{Binding YearlyCount}"/>
+        <TextBlock Text="Nye brugere - dagligt:" 
+                   Grid.Row="1" 
+                   Grid.Column="0" 
+                   VerticalAlignment="Center" 
+                   HorizontalAlignment="Left" />
+        
+        <TextBlock Text="Nye brugere - ugentligt:" 
+                   Grid.Row="2" 
+                   Grid.Column="0" 
+                   VerticalAlignment="Center" 
+                   HorizontalAlignment="Left"/>
+        
+        <TextBlock Text="Nye brugere - månedligt:" 
+                   Grid.Row="3" 
+                   Grid.Column="0"  
+                   VerticalAlignment="Center" 
+                   HorizontalAlignment="Left"/>
+        
+        <TextBlock Text="Nye brugere - årligt:" 
+                   Grid.Row="4" 
+                   Grid.Column="0"  
+                   VerticalAlignment="Center" 
+                   HorizontalAlignment="Left"/>
+
+        <TextBlock x:Name="DailyCountText" 
+                   Grid.Row="1" 
+                   Grid.Column="0"  
+                   VerticalAlignment="Center" 
+                   Margin="200,0,0,0"  
+                   Text="{Binding DailyCount}"/>
+        
+        <TextBlock x:Name="WeeklyCountText" 
+                   Grid.Row="2" 
+                   Grid.Column="0"  
+                   VerticalAlignment="Center" 
+                   Margin="200,0,0,0" 
+                   Text="{Binding WeeklyCount}"/>
+        
+        <TextBlock x:Name="MonthlyCountText" 
+                   Grid.Row="3" 
+                   Grid.Column="0"  
+                   VerticalAlignment="Center" 
+                   Margin="200,0,0,0" 
+                   Text="{Binding MonthlyCount}"/>
+        
+        <TextBlock x:Name="YearlyCountText" 
+                   Grid.Row="4" 
+                   Grid.Column="0"  
+                   VerticalAlignment="Center" 
+                   Margin="200,0,0,0" 
+                   Text="{Binding YearlyCount}"/>
+        
     </Grid>
 </UserControl>
