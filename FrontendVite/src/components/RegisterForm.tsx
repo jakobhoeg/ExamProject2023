@@ -26,7 +26,7 @@ const RegisterForm: React.FC = () => {
 
     try {
       setIsLoading(true);
-      const response = await fetch("http://51.20.138.229:5000/register", {
+      const response = await fetch("http://16.170.143.117:5000/register", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

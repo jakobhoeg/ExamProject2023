@@ -11,7 +11,7 @@ using static System.Net.Mime.MediaTypeNames;
 
 var builder = WebApplication.CreateBuilder(args);
 var allowedOrigins = "http://localhost:5173";
-var globalAllowedOrigins = "http://51.20.138.229:3000";
+var globalAllowedOrigins = "http://16.170.143.117:3000";
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
