@@ -5,6 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:AdminClient.View.Windows"
         xmlns:viewPages="clr-namespace:AdminClient.View.Pages"
+             xmlns:viewPageModels="clr-namespace:AdminClient.ViewModel.Pages"
         xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
         mc:Ignorable="d"
         WindowCornerPreference="Round"
@@ -13,8 +14,11 @@
         >
 
     <Window.Resources>
-        <DataTemplate x:Key="LoginView"  >
+        <DataTemplate x:Key="LoginView" DataType="{x:Type viewPageModels:LoginViewModel}">
             <viewPages:LoginView />
+        </DataTemplate>
+        <DataTemplate x:Key="HomeView" DataType="{x:Type viewPageModels:HomeViewModel}">
+            <viewPages:HomeView />
         </DataTemplate>
     </Window.Resources>
 
@@ -38,7 +42,7 @@
             </StackPanel>
         </StackPanel>
         <Grid>
-            <ContentControl x:Name="pageContent" Content="{Binding}" ContentTemplate="{StaticResource LoginView}" Margin="6,10,0,0" />
+            <ContentControl x:Name="pageContent" Content="{Binding}"  Margin="6,10,0,0" />
         </Grid>
 
 

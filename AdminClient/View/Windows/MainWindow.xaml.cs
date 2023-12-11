@@ -20,8 +20,16 @@ namespace AdminClient.View.Windows
             WindowStartupLocation = WindowStartupLocation.CenterScreen;
 
             loginBtn.IsSelected = true;
-            DataContext = new LoginViewModel();
+            var loginView = new LoginView();
+            pageContent.Content = loginView;
+
+            loginView.ViewModel.SuccessfulLogin += OnSuccessfulLogin;
+
         }
 
+        private void OnSuccessfulLogin(object sender, EventArgs e)
+        {
+            pageContent.Content = new HomeView();
+        }
     }
 }

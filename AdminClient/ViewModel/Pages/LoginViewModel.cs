@@ -74,6 +74,8 @@ namespace AdminClient.ViewModel.Pages
 
             if (loggedInUser != null)
             {
+                OnSuccessfulLogin();
+
                 Debug.WriteLine($"Login successful. Welcome, {loggedInUser.FirstName}!");
                 return true;
             }
@@ -84,6 +86,12 @@ namespace AdminClient.ViewModel.Pages
             }
         }
 
+        public event EventHandler<EventArgs> SuccessfulLogin;
+
+        protected virtual void OnSuccessfulLogin()
+        {
+            SuccessfulLogin?.Invoke(this, EventArgs.Empty);
+        }
 
     }
 }
