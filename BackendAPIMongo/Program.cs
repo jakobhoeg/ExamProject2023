@@ -537,13 +537,13 @@ app.MapGet("/statistics/user-count", async (IUserRepository iUserRepository, Htt
 #endregion
 
 #region User Statistics Endpoint
-app.MapGet("/users/count/daily", async (IUserRepository iUserRepository) => { return await iUserRepository.GetNewUsersDailyCountAsync(); });
+app.MapGet("/users/count/daily", async (IUserRepository iUserRepository) => { return await iUserRepository.GetNewUsersDailyCountAsync(); }).RequireAuthorization("admin");
 
-app.MapGet("/users/count/weekly", async (IUserRepository iUserRepository) => { return await iUserRepository.GetNewUsersWeeklyCountAsync();});
+app.MapGet("/users/count/weekly", async (IUserRepository iUserRepository) => { return await iUserRepository.GetNewUsersWeeklyCountAsync();}).RequireAuthorization("admin");
 
-app.MapGet("/users/count/monthly", async (IUserRepository iUserRepository) => { return await iUserRepository.GetNewUsersMonthlyCountAsync(); });
+app.MapGet("/users/count/monthly", async (IUserRepository iUserRepository) => { return await iUserRepository.GetNewUsersMonthlyCountAsync(); }).RequireAuthorization("admin");
 
-app.MapGet("/users/count/yearly", async (IUserRepository iUserRepository) => { return await iUserRepository.GetNewUsersYearlyCountAsync(); });
+app.MapGet("/users/count/yearly", async (IUserRepository iUserRepository) => { return await iUserRepository.GetNewUsersYearlyCountAsync(); }).RequireAuthorization("admin");
 
 #endregion
 
