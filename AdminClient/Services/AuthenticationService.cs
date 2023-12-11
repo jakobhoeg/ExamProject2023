@@ -13,6 +13,8 @@ namespace AdminClient.Services
     public class AuthenticationService
     {
         private HttpClient _httpClient;
+        public User User { get; set; }
+
 
         public AuthenticationService()
         {
@@ -43,9 +45,9 @@ namespace AdminClient.Services
 
                     string responseContent = await response.Content.ReadAsStringAsync();
 
-                    User loggedInUser = JsonConvert.DeserializeObject<User>(responseContent);
+                    User = JsonConvert.DeserializeObject<User>(responseContent);
 
-                    return loggedInUser;
+                    return User;
                 }
                 else
                 {

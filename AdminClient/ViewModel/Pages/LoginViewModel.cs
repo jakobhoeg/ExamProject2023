@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Security;
 using System.Text;
@@ -73,9 +74,7 @@ namespace AdminClient.ViewModel.Pages
 
             if (loggedInUser != null)
             {
-                // Successfully logged in, you can use loggedInUser throughout your application
-                Debug.WriteLine($"Login successful. Welcome, {loggedInUser.Email}!");
-                // Additional logic based on the user, such as navigating to a different page
+                Debug.WriteLine($"Login successful. Welcome, {loggedInUser.FirstName}!");
                 return true;
             }
             else
