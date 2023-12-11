@@ -12,7 +12,7 @@ namespace AdminClient.Services
 {
     public class AuthenticationService
     {
-        private HttpClient _httpClient;
+        public HttpClient _httpClient;
         public User User { get; set; }
 
 

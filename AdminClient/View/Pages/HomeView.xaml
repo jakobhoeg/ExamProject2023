@@ -3,10 +3,31 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:AdminClient.View.Pages"
+             xmlns:local="clr-namespace:AdminClient.View.Pages" xmlns:pages="clr-namespace:AdminClient.ViewModel.Pages" d:DataContext="{d:DesignInstance Type=pages:HomeViewModel}"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <Grid>
-        <TextBlock Text="Hej!" />
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="auto"/>
+            <ColumnDefinition Width="auto"/>
+        </Grid.ColumnDefinitions>
+
+        <TextBlock Text="Statistik - Brugerregistreringer" FontWeight="Medium" FontSize="20" Grid.Row="0" Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+        <TextBlock Text="Nye brugere - dagligt" Grid.Row="1" Grid.Column="0" VerticalAlignment="Center" />
+        <TextBlock Text="Nye brugere - ugentligt" Grid.Row="2" Grid.Column="0" VerticalAlignment="Center" />
+        <TextBlock Text="Nye brugere - månedligt" Grid.Row="3" Grid.Column="0"  VerticalAlignment="Center" />
+        <TextBlock Text="Nye brugere - årligt" Grid.Row="4" Grid.Column="0"  VerticalAlignment="Center" />
+
+        <TextBlock x:Name="DailyCountText" Grid.Row="1" Grid.Column="0"  VerticalAlignment="Center" Text="{Binding DailyCount}"/>
+        <TextBlock x:Name="WeeklyCountText" Grid.Row="2" Grid.Column="0"  VerticalAlignment="Center" Text="{Binding WeeklyCount}"/>
+        <TextBlock x:Name="MonthlyCountText" Grid.Row="3" Grid.Column="0"  VerticalAlignment="Center" Text="{Binding MonthlyCount}"/>
+        <TextBlock x:Name="YearlyCountText" Grid.Row="4" Grid.Column="0"  VerticalAlignment="Center" Text="{Binding YearlyCount}"/>
     </Grid>
 </UserControl>
