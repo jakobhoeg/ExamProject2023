@@ -147,8 +147,7 @@ app.MapPost("/login", async (User user, IUserRepository iUserRepository, HttpCon
             return Results.Ok(dbUser);
         }
     }
-
-    if (!dbUser.IsAdmin)
+    else
     {
         // Try to login with the user object given in the request body.
         // Authenticate user and then create a token
