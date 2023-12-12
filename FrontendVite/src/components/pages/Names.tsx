@@ -59,8 +59,8 @@ export default function Names() {
   const getBabyData = async (index: number, isFiltering = false) => {
     try {
       const url = isFiltering
-        ? new URL(`http://16.170.143.117:5000/babynames/api/sort/${sortMethod}`)
-        : new URL(`http://16.170.143.117:5000/babynames/api/?page=${index}`);
+        ? new URL(`http://16.170.143.117:5000/api/babynames/sort/${sortMethod}`)
+        : new URL(`http://16.170.143.117:5000/api/babynames/?page=${index}`);
 
       if (isFiltering) {
         url.searchParams.append("page", index.toString());
