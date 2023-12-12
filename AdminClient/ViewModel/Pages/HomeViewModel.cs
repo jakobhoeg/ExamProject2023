@@ -58,17 +58,17 @@ namespace AdminClient.ViewModel.Pages
 
         public async Task UpdateStatistics()
         {
-            DailyCount = await MakeGetRequest("/users/count/daily");
-            WeeklyCount = await MakeGetRequest("/users/count/weekly");
-            MonthlyCount = await MakeGetRequest("/users/count/monthly");
-            YearlyCount = await MakeGetRequest("/users/count/yearly");
+            DailyCount = await MakeGetRequest("statistics/users/count/daily");
+            WeeklyCount = await MakeGetRequest("statistics/users/count/weekly");
+            MonthlyCount = await MakeGetRequest("statistics/users/count/monthly");
+            YearlyCount = await MakeGetRequest("statistics/users/count/yearly");
         }
 
         private async Task<string> MakeGetRequest(string endpoint)
         {
             var authService = AuthenticationService.Instance;
 
-            var response = await authService._httpClient.GetAsync("http://16.170.143.117:5000" + endpoint);
+            var response = await authService._httpClient.GetAsync("http://16.170.143.117:5000/api" + endpoint);
             Debug.WriteLine(response);
             if (response.IsSuccessStatusCode)
             {

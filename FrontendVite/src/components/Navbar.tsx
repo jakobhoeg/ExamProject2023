@@ -14,6 +14,18 @@ export default function Navbar() {
         { name: 'Vores Matches', path: '/matches', imgUrl: '/heart.svg'},
       ]
 
+    const animationStyles = `
+      @keyframes fillChange {
+        0% { fill: rgb(255, 0, 0); } /* Red */
+        33% { fill: rgb(0, 255, 0); } /* Green */
+        67% { fill: rgb(0, 0, 255); } /* Blue */
+        100% { fill: rgb(255, 0, 0); } /* Red */
+      }
+      #Vector {
+        animation: fillChange 3s infinite;
+      }
+    `;
+
   return (
     <nav className='absolute top-0 w-full flex items-center justify-between border-b py-6 md:px-8 lg:px-28'>
       <div className='uppercase text-sm flex items-center'>

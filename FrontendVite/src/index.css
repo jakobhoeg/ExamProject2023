@@ -43,5 +43,15 @@ h1 {
     color: #213547;
     background-color: #ffffff;
   }
+
+  @keyframes fillChange {
+    0% { fill: rgb(255, 0, 0); } /* Red */
+    33% { fill: rgb(0, 255, 0); } /* Green */
+    67% { fill: rgb(0, 0, 255); } /* Blue */
+    100% { fill: rgb(255, 0, 0); } /* Red */
+  }
   
+  #Vector {
+    animation: fillChange 3s infinite;
+  }
 }

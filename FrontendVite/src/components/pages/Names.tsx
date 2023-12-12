@@ -24,7 +24,7 @@ export default function Names() {
   useEffect(() => {
     const getUserInfo = async () => {
       try {
-        const response = await fetch("http://16.170.143.117:5000/user", {
+        const response = await fetch("http://16.170.143.117:5000/api/user", {
           method: "GET",
           credentials: "include",
         });
@@ -48,11 +48,19 @@ export default function Names() {
     }
   }, [isLoggedIn, lastLikedNameId]);
 
+  function formatNumber(num) {
+    if (num >= 1000) {
+      return (num / 1000).toFixed(1) + 'k';
+    } else {
+      return num.toString();
+    }
+  }
+
   const getBabyData = async (index: number, isFiltering = false) => {
     try {
       const url = isFiltering
-        ? new URL(`http://16.170.143.117:5000/babynames/sort/${sortMethod}`)
-        : new URL(`http://16.170.143.117:5000/babynames/?page=${index}`);
+        ? new URL(`http://16.170.143.117:5000/babynames/api/sort/${sortMethod}`)
+        : new URL(`http://16.170.143.117:5000/babynames/api/?page=${index}`);
 
       if (isFiltering) {
         url.searchParams.append("page", index.toString());
@@ -82,11 +90,11 @@ export default function Names() {
 
   const getRandomBabyName = async (isFiltering = false) => {
     try {
-      let url = new URL("http://16.170.143.117:5000/babyname/random");
+      let url = new URL("http://16.170.143.117:5000/api/babyname/random");
 
       if (isSwipeMode && isFiltering) {
         // Include sorting criteria if in swipemode
-        url = new URL(`http://16.170.143.117:5000/babyname/random/sort`);
+        url = new URL(`http://16.170.143.117:5000/api/babyname/random/sort`);
         url.searchParams.append("sortMethod", sortMethod);
         url.searchParams.append("isMale", isMaleFilter.toString());
         url.searchParams.append("isFemale", isFemaleFilter.toString());
@@ -206,7 +214,7 @@ export default function Names() {
 
   const handleLikeClick = async (babyName: BabyName) => {
     try {
-      const response = await fetch(`http://16.170.143.117:5000/babynames/like`, {
+      const response = await fetch(`http://16.170.143.117:5000/api/babynames/like`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",

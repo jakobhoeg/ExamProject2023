@@ -13,7 +13,7 @@ export default function Matches() {
   useEffect(() => {
     const getMatches = async () => {
       try {
-        const response = await fetch("http://16.170.143.117:5000/matches", {
+        const response = await fetch("http://16.170.143.117:5000/api/babynames/matches", {
           method: "GET",
           credentials: "include",
         });

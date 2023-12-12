@@ -89,7 +89,7 @@ app.UseAuthorization();
 
 
 #region Authentication endpoints
-app.MapPost("/register", async (User user, IUserRepository iUserRepository) =>
+app.MapPost("/api/register", async (User user, IUserRepository iUserRepository) =>
 {
     // Only allow theses properties to be set when registering a user (prevent users from setting their own role)
     var registrationUser = new User
@@ -114,7 +114,7 @@ app.MapPost("/register", async (User user, IUserRepository iUserRepository) =>
     try
     {
         await iUserRepository.Register(registrationUser);
-        return Results.Ok("User registered succesfully");
+        return Results.Created("/api/register", "User registered successfully");
     }
     catch (Exception e)
     {
@@ -124,7 +124,7 @@ app.MapPost("/register", async (User user, IUserRepository iUserRepository) =>
 }).AllowAnonymous();
 
 
-app.MapPost("/login", async (User user, IUserRepository iUserRepository, HttpContext ctx) =>
+app.MapPost("/api/login", async (User user, IUserRepository iUserRepository, HttpContext ctx) =>
 {
     // get the user from the database to determine if the user is an admin or not
     var dbUser = await iUserRepository.GetUser(user);
@@ -171,18 +171,7 @@ app.MapPost("/login", async (User user, IUserRepository iUserRepository, HttpCon
 
 }).AllowAnonymous();
 
-
-app.MapPost("/logout", async (HttpContext ctx) =>
-{
-    await ctx.SignOutAsync(AuthScheme);
-    return Results.Ok("Logged out succesfully");
-}).RequireAuthorization(builder => builder.RequireAssertion(context =>
-{
-    return context.User.HasClaim("role", "user") || context.User.HasClaim("role", "admin");
-}));
-
-
-app.MapGet("/check-login", async (HttpContext context) =>
+app.MapGet("/api/logged-in", async (HttpContext context) =>
 {
     if (context.User.Identity.IsAuthenticated)
     {
@@ -196,10 +185,22 @@ app.MapGet("/check-login", async (HttpContext context) =>
 {
     return context.User.HasClaim("role", "user") || context.User.HasClaim("role", "admin");
 }));
+
+app.MapPost("/api/logout", async (HttpContext ctx) =>
+{
+    await ctx.SignOutAsync(AuthScheme);
+    return Results.Ok("Logged out succesfully");
+}).RequireAuthorization(builder => builder.RequireAssertion(context =>
+{
+    return context.User.HasClaim("role", "user") || context.User.HasClaim("role", "admin");
+}));
+
+
+
 #endregion
 
 // Get User object of logged in user (for profile page)
-app.MapGet("/user", async (IUserRepository iUserRepository, HttpContext context) =>
+app.MapGet("/api/user", async (IUserRepository iUserRepository, HttpContext context) =>
 {
     if (context.User.Identity.IsAuthenticated)
     {
@@ -227,8 +228,37 @@ app.MapGet("/user", async (IUserRepository iUserRepository, HttpContext context)
     return context.User.HasClaim("role", "user") || context.User.HasClaim("role", "admin");
 }));
 
+app.MapPut("/api/user/email", async (IUserRepository iUserRepository, HttpContext context) =>
+{
+    if (context.User.Identity.IsAuthenticated)
+    {
+        string? userEmail = context.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
 
-app.MapPost("/add-partner", async (IUserRepository iUserRepository, HttpContext context, IMatchedBabyNamesRepository iMatchedBabyNamesRepository) =>
+        // Read the request body and deserialize it into UserRequest
+        using (StreamReader? reader = new StreamReader(context.Request.Body))
+        {
+            string? requestBody = await reader.ReadToEndAsync();
+            UserRequest? userRequest = JsonConvert.DeserializeObject<UserRequest>(requestBody);
+
+            if (userRequest == null || string.IsNullOrEmpty(userRequest.Email))
+            {
+                return Results.BadRequest("Invalid or missing email in the request body.");
+            }
+
+            User? user = await iUserRepository.GetUser(new User { Email = userEmail });
+            await iUserRepository.ChangeEmailAddressAsync(user, userRequest.Email);
+
+            return Results.Ok("Email updated successfully");
+        }
+    }
+
+    return Results.Unauthorized();
+}).RequireAuthorization(builder => builder.RequireAssertion(context =>
+{
+    return context.User.HasClaim("role", "user") || context.User.HasClaim("role", "admin");
+}));
+
+app.MapPost("/api/partner", async (IUserRepository iUserRepository, HttpContext context, IMatchedBabyNamesRepository iMatchedBabyNamesRepository) =>
 {
     if (context.User.Identity.IsAuthenticated)
     {
@@ -272,56 +302,56 @@ app.MapPost("/add-partner", async (IUserRepository iUserRepository, HttpContext 
 
 #region BabyName endpoints
 
-app.MapGet("/babynames", async ([FromQuery] int page, IBabyNameRepository iBabyNameRepository) =>
+app.MapGet("/api/babynames", async ([FromQuery] int page, IBabyNameRepository iBabyNameRepository) =>
 {
     var babyNamesList = await iBabyNameRepository.GetBabyNames(page);
     
     return Results.Ok(babyNamesList);
 }).AllowAnonymous();
 
-app.MapGet("/babynames/international", async ([FromQuery] int page, [FromQuery] bool isInternational, IBabyNameRepository iBabyNameRepository) =>
+app.MapGet("/api/babynames/international", async ([FromQuery] int page, [FromQuery] bool isInternational, IBabyNameRepository iBabyNameRepository) =>
 {
     var babyNamesList = await iBabyNameRepository.GetInternationalBabyNames(page, isInternational);
 
     return Results.Ok(babyNamesList);
 }).AllowAnonymous();
 
-app.MapGet("/babynames/sort/likes/asc", async ([FromQuery] int page, [FromQuery] bool isMale, [FromQuery] bool isFemale, [FromQuery] bool isInternational, IBabyNameRepository iBabyNameRepository) =>
+app.MapGet("/api/babynames/sort/likes/asc", async ([FromQuery] int page, [FromQuery] bool isMale, [FromQuery] bool isFemale, [FromQuery] bool isInternational, IBabyNameRepository iBabyNameRepository) =>
 {
     var babyNamesList = await iBabyNameRepository.GetBabyNamesSortedByLikesAsc(page, isMale, isFemale, isInternational);
 
     return Results.Ok(babyNamesList);
 }).AllowAnonymous();
 
-app.MapGet("/babynames/sort/likes/desc", async ([FromQuery] int page, [FromQuery] bool isMale, [FromQuery] bool isFemale, [FromQuery] bool isInternational, IBabyNameRepository iBabyNameRepository) =>
+app.MapGet("/api/babynames/sort/likes/desc", async ([FromQuery] int page, [FromQuery] bool isMale, [FromQuery] bool isFemale, [FromQuery] bool isInternational, IBabyNameRepository iBabyNameRepository) =>
 {
     var babyNamesList = await iBabyNameRepository.GetBabyNamesSortedByLikesDesc(page, isMale, isFemale, isInternational);
 
     return Results.Ok(babyNamesList);
 }).AllowAnonymous();
 
-app.MapGet("/babynames/sort/name/asc", async ([FromQuery] int page, [FromQuery] bool isMale, [FromQuery] bool isFemale, [FromQuery] bool isInternational, IBabyNameRepository iBabyNameRepository) =>
+app.MapGet("/api/babynames/sort/name/asc", async ([FromQuery] int page, [FromQuery] bool isMale, [FromQuery] bool isFemale, [FromQuery] bool isInternational, IBabyNameRepository iBabyNameRepository) =>
 {
     var babyNamesList = await iBabyNameRepository.GetBabyNamesSortedByNameAsc(page, isMale, isFemale, isInternational);
 
     return Results.Ok(babyNamesList);
 }).AllowAnonymous();
 
-app.MapGet("/babynames/sort/name/desc", async ([FromQuery] int page, [FromQuery] bool isMale, [FromQuery] bool isFemale, [FromQuery] bool isInternational, IBabyNameRepository iBabyNameRepository) =>
+app.MapGet("/api/babynames/sort/name/desc", async ([FromQuery] int page, [FromQuery] bool isMale, [FromQuery] bool isFemale, [FromQuery] bool isInternational, IBabyNameRepository iBabyNameRepository) =>
 {
     var babyNamesList = await iBabyNameRepository.GetBabyNamesSortedByNameDesc(page, isMale, isFemale, isInternational);
 
     return Results.Ok(babyNamesList);
 }).AllowAnonymous();
 
-app.MapGet("/babyname/random", async (IBabyNameRepository iBabyNameRepository, IUserRepository iUserRepository, HttpContext context) =>
+app.MapGet("/api/babyname/random", async (IBabyNameRepository iBabyNameRepository, IUserRepository iUserRepository, HttpContext context) =>
 {
     var babyName = await iBabyNameRepository.GetRandomBabyName();
 
     return Results.Ok(babyName);
 }).AllowAnonymous();
 
-app.MapGet("/babyname/random/sort", async([FromQuery] bool isMale, [FromQuery] bool isFemale, [FromQuery] bool isInternational, IBabyNameRepository iBabyNameRepository, IUserRepository iUserRepository, HttpContext context) =>
+app.MapGet("/api/babyname/random/sort", async([FromQuery] bool isMale, [FromQuery] bool isFemale, [FromQuery] bool isInternational, IBabyNameRepository iBabyNameRepository, IUserRepository iUserRepository, HttpContext context) =>
 {
     var babyName = await iBabyNameRepository.GetRandomBabyNameSort(isMale, isFemale, isInternational);
 
@@ -330,7 +360,7 @@ app.MapGet("/babyname/random/sort", async([FromQuery] bool isMale, [FromQuery] b
 
 #endregion
 
-app.MapDelete("/remove-partner", async (IUserRepository iUserRepository, HttpContext context) =>
+app.MapDelete("/api/partner", async (IUserRepository iUserRepository, HttpContext context) =>
 {
     if (context.User.Identity.IsAuthenticated)
     {
@@ -365,7 +395,7 @@ app.MapDelete("/remove-partner", async (IUserRepository iUserRepository, HttpCon
 // If the babyname is already in the users likedBabyNames list, it will be removed and the count will be decreased.
 // If not , it will be added and the count will be increased.
 // It also checks if the user has a partner and if the partner has liked the babyname too and then add or removes it from the matchedBabyNames list.
-app.MapPut("/babynames/like", async (IUserRepository iUserRepository, IBabyNameRepository iBabyNameRepository, BabyName babyName, HttpContext context, IMatchedBabyNamesRepository iMatchedBabyRepository) =>
+app.MapPut("/api/babynames/like", async (IUserRepository iUserRepository, IBabyNameRepository iBabyNameRepository, BabyName babyName, HttpContext context, IMatchedBabyNamesRepository iMatchedBabyRepository) =>
 {
     if (context.User.Identity.IsAuthenticated)
     {
@@ -458,38 +488,10 @@ app.MapPut("/babynames/like", async (IUserRepository iUserRepository, IBabyNameR
     return context.User.HasClaim("role", "user") || context.User.HasClaim("role", "admin");
 }));
 
-app.MapPut("/update-user-email", async (IUserRepository iUserRepository, HttpContext context) =>
-{
-    if (context.User.Identity.IsAuthenticated)
-    {
-        string? userEmail = context.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
-
-        // Read the request body and deserialize it into UserRequest
-        using (StreamReader? reader = new StreamReader(context.Request.Body))
-        {
-            string? requestBody = await reader.ReadToEndAsync();
-            UserRequest? userRequest = JsonConvert.DeserializeObject<UserRequest>(requestBody);
-
-            if (userRequest == null || string.IsNullOrEmpty(userRequest.Email))
-            {
-                return Results.BadRequest("Invalid or missing email in the request body.");
-            }
-
-            User? user = await iUserRepository.GetUser(new User { Email = userEmail });
-            await iUserRepository.ChangeEmailAddressAsync(user, userRequest.Email);
-
-            return Results.Ok("Email updated successfully");
-        }
-    }
-
-    return Results.Unauthorized();
-}).RequireAuthorization(builder => builder.RequireAssertion(context =>
-{
-    return context.User.HasClaim("role", "user") || context.User.HasClaim("role", "admin");
-}));
 
 
-app.MapGet("/matches", async (IUserRepository iUserRepository, IMatchedBabyNamesRepository iMatchedBabyNamesRepository, HttpContext context) =>
+
+app.MapGet("/api/babynames/matches", async (IUserRepository iUserRepository, IMatchedBabyNamesRepository iMatchedBabyNamesRepository, HttpContext context) =>
 {
     if (context.User.Identity.IsAuthenticated)
     {
@@ -525,32 +527,17 @@ app.MapGet("/matches", async (IUserRepository iUserRepository, IMatchedBabyNames
     return context.User.HasClaim("role", "user") || context.User.HasClaim("role", "admin");
 }));
 
-#region Admin endpoints
-
-app.MapGet("/statistics/user-count", async (IUserRepository iUserRepository, HttpContext context) =>
-{
-    if (context.User.Identity.IsAuthenticated)
-    {
-        long userCount = await iUserRepository.GetUserCountAsync();
-        return Results.Ok(userCount);
-    }
-    else
-    {
-        return Results.Unauthorized();
-    }
-
-}).RequireAuthorization("admin");
-
-#endregion
 
 #region User Statistics Endpoint
-app.MapGet("/users/count/daily", async (IUserRepository iUserRepository) => { return await iUserRepository.GetNewUsersDailyCountAsync(); }).RequireAuthorization("admin");
+app.MapGet("/api/statistics/users/count", async (IUserRepository iUserRepository, HttpContext context) =>{ return await iUserRepository.GetUserCountAsync(); }).RequireAuthorization("admin");
 
-app.MapGet("/users/count/weekly", async (IUserRepository iUserRepository) => { return await iUserRepository.GetNewUsersWeeklyCountAsync();}).RequireAuthorization("admin");
+app.MapGet("/api/statistics/users/count/daily", async (IUserRepository iUserRepository) => { return await iUserRepository.GetNewUsersDailyCountAsync(); }).RequireAuthorization("admin");
 
-app.MapGet("/users/count/monthly", async (IUserRepository iUserRepository) => { return await iUserRepository.GetNewUsersMonthlyCountAsync(); }).RequireAuthorization("admin");
+app.MapGet("/api/statistics/users/count/weekly", async (IUserRepository iUserRepository) => { return await iUserRepository.GetNewUsersWeeklyCountAsync();}).RequireAuthorization("admin");
 
-app.MapGet("/users/count/yearly", async (IUserRepository iUserRepository) => { return await iUserRepository.GetNewUsersYearlyCountAsync(); }).RequireAuthorization("admin");
+app.MapGet("/api/statistics/users/count/monthly", async (IUserRepository iUserRepository) => { return await iUserRepository.GetNewUsersMonthlyCountAsync(); }).RequireAuthorization("admin");
+
+app.MapGet("/api/statistics/users/count/yearly", async (IUserRepository iUserRepository) => { return await iUserRepository.GetNewUsersYearlyCountAsync(); }).RequireAuthorization("admin");
 
 #endregion
 
