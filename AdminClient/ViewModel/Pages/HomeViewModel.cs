@@ -14,6 +14,7 @@ namespace AdminClient.ViewModel.Pages
         private string _weeklyCount;
         private string _monthlyCount;
         private string _yearlyCount;
+        private string _totalCount;
 
 
         public string DailyCount
@@ -56,12 +57,24 @@ namespace AdminClient.ViewModel.Pages
             }
         }
 
+        public string TotalCount
+        {
+            get => _totalCount;
+            set
+            {
+                _totalCount = value;
+                OnPropertyChanged(nameof(TotalCount));
+            }
+        }
+
+
         public async Task UpdateStatistics()
         {
             DailyCount = await MakeGetRequest("statistics/users/count/daily");
             WeeklyCount = await MakeGetRequest("statistics/users/count/weekly");
             MonthlyCount = await MakeGetRequest("statistics/users/count/monthly");
             YearlyCount = await MakeGetRequest("statistics/users/count/yearly");
+            TotalCount = await MakeGetRequest("statistics/users/count");
         }
 
         private async Task<string> MakeGetRequest(string endpoint)

@@ -15,6 +15,7 @@
                 <RowDefinition Height="*" />
                 <RowDefinition Height="*" />
                 <RowDefinition Height="*" />
+                <RowDefinition Height="*" />
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="auto"/>
@@ -53,6 +54,12 @@
                    VerticalAlignment="Center" 
                    HorizontalAlignment="Left"/>
 
+            <TextBlock Text="Registrerede brugere i alt:" 
+                   Grid.Row="5" 
+                   Grid.Column="0"  
+                   VerticalAlignment="Center" 
+                   HorizontalAlignment="Left"/>
+            
             <TextBlock x:Name="DailyCountText" 
                    Grid.Row="1" 
                    Grid.Column="0"  
@@ -80,6 +87,13 @@
                    VerticalAlignment="Center" 
                    Margin="200,0,0,0" 
                    Text="{Binding YearlyCount}"/>
+
+            <TextBlock x:Name="TotalCountText" 
+                   Grid.Row="5" 
+                   Grid.Column="0"  
+                   VerticalAlignment="Center" 
+                   Margin="200,0,0,0" 
+                   Text="{Binding TotalCount}"/>
 
         </Grid>
     </Border>
