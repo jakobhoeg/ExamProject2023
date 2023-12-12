@@ -1,59 +1,56 @@
 using BackendAPIMongo.Model;
-using BackendAPIMongo.Repository;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.VisualStudio.TestPlatform.TestHost;
-using Moq;
-using System.Security.Claims;
+using Microsoft.AspNetCore.Mvc.Testing;
+using MongoDB.Bson;
+using MongoDB.Driver;
+using NUnit.Framework;
+using System.Diagnostics;
+using System.Net.Http.Json;
+using System.Threading.Tasks;
 
 namespace NUnitTesting
 {
     public class Tests
     {
-        //Program program;
-        //User user;
+        private WebApplicationFactory<Program> _factory;
+        private HttpClient _client;
 
-        [SetUp]
-        public void Setup()
+        [OneTimeSetUp]
+        public void OneTimeSetUp()
         {
-            //program = new Program();
-            //user = new User();
-
-            //user.Email = "";
-            //user.Password = "";
-            //user.FirstName = "";
-            //user.IsAdmin = false;
-            //user.Partner = null;
-            //user.LikedBabyNames = new List<BabyName>();
+            _factory = new WebApplicationFactory<Program>();
+            _client = _factory.CreateClient();
         }
 
-
+        [OneTimeTearDown]
+        public void OneTimeTearDown()
+        {
+            // Dispose of resources created for the tests.
+            _client.Dispose();
+            _factory.Dispose();
+        }
 
         [Test]
-        public async Task MapPost_ValidUser_ReturnsOkResult()
+        public async Task Login_ValidUser_ReturnsOK()
         {
-            //// Arrange
-            //var user = new User { Email = "test@example.com", Password = "password" };
-            //var userRepositoryMock = new Mock<IUserRepository>();
-            //userRepositoryMock.Setup(repo => repo.Authenticate(user)).ReturnsAsync(true);
-            //var contextMock = new Mock<HttpContext>();
-            //var signInResult = SignInResult.Success;
-            //contextMock.Setup(ctx => ctx.SignInAsync(AuthScheme, It.IsAny<ClaimsPrincipal>())).ReturnsAsync(signInResult);
+            // Arrange
+            var user = new User
+            {
+                Email = "jakobfsd@hotmail.dk",
+                Password = "1234"
+            };
 
-            //var program = new Program();
+            try
+            {
+                // Act
+                var response = await _client.PostAsJsonAsync("/api/login", user);
 
-            //// Act
-            //var result = await program.MapPost(user, userRepositoryMock.Object, contextMock.Object);
-
-            //// Assert
-            //Assert.IsInstanceOf<OkObjectResult>(result);
-            //var okResult = (OkObjectResult)result;
-            //Assert.AreEqual("Logged in successfully", okResult.Value);
-
-
-            Assert.Pass();
+                // Assert
+                response.EnsureSuccessStatusCode();
+            } catch  (Exception ex)
+            {
+                Console.WriteLine($"Exception: {ex.Message}");
+                throw;
+            }
         }
     }
 }

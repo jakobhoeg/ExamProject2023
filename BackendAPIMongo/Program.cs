@@ -542,3 +542,5 @@ app.MapGet("/api/statistics/users/count/yearly", async (IUserRepository iUserRep
 #endregion
 
 app.Run();
+
+public partial class Program { }
