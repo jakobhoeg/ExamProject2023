@@ -31,7 +31,7 @@ namespace AdminClient.Services
             };
 
             _httpClient = new HttpClient(handler);
-            _httpClient.BaseAddress = new Uri("http://16.170.143.117:5000/api");
+            _httpClient.BaseAddress = new Uri("http://16.170.143.117:5000/api/");
             _httpClient.DefaultRequestHeaders.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json"));
         }
 
