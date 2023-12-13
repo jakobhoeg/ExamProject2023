@@ -26,6 +26,9 @@ namespace AdminClient.View.Windows
 
             // Subscribe/bind to the SuccessfulLogin event
             loginView.ViewModel.SuccessfulLogin += OnSuccessfulLogin;
+
+            // Bind mouse click to btn
+            userAdminBtn.PreviewMouseLeftButtonDown += UserAdmin_BtnClick;
         }
 
         private void OnSuccessfulLogin(object sender, EventArgs e)
@@ -35,6 +38,13 @@ namespace AdminClient.View.Windows
             loginBtn.IsEnabled = false;
             homeBtn.IsSelected = true;
             homeBtn.IsEnabled = true;
+            userAdminBtn.IsEnabled = true;
+        }
+
+        private void UserAdmin_BtnClick(object sender, RoutedEventArgs e)
+        {
+            var userAdminView = new UserAdminView();
+            pageContent.Content = userAdminView;
         }
     }
 }

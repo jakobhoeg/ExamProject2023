@@ -43,9 +43,10 @@
                     </StackPanel>
                 </ListViewItem>
                 <ListViewItem Name="userAdminBtn" Width="75" IsEnabled="False">
-                    <StackPanel Orientation="Vertical" HorizontalAlignment="Center" Height="52">
+                    <StackPanel Orientation="Vertical" HorizontalAlignment="Center" Height="59">
                         <ui:SymbolIcon FontSize="24" Symbol="Home48" />
-                        <TextBlock Margin="10,0,10,0" FontSize="11" >Bruger Admin</TextBlock>
+                        <TextBlock Margin="10,0,10,0" FontSize="11" >Bruger</TextBlock>
+                        <TextBlock Margin="10,0,10,0" FontSize="11" >admin.</TextBlock>
                     </StackPanel>
                 </ListViewItem>
             </ListView>
