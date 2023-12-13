@@ -18,7 +18,7 @@ namespace BackendAPIMongo.Repository
         public Task RemovePartner(User user, string partnerEmail);
         public Task LikeBabyname(User user, BabyName babyName);
         public Task UnlikeBabyname(User user, BabyName babyName);
-        public Task ChangeEmailAddressAsync(User user, string newEmail);
+        public Task ChangeEmailAddressAsync(string currentEmail, string newEmail);
 
         // Admin methods
         public Task<long> GetUserCountAsync();
@@ -253,38 +253,30 @@ namespace BackendAPIMongo.Repository
         /// <param name="newEmail"></param>
         /// <returns></returns>
         /// <exception cref="Exception"></exception>
-        public Task ChangeEmailAddressAsync(User user, string newEmail)
+        public async Task ChangeEmailAddressAsync(string currentEmail, string newEmail)
         {
-            if (_users.Find(u => u.Email == user.Email).FirstOrDefault() == null)
+            var filter = Builders<User>.Filter.Eq(u => u.Email, currentEmail);
+            var update = Builders<User>.Update.Set(u => u.Email, newEmail);
+
+            var result = await _users.UpdateOneAsync(filter, update);
+
+            if (result.ModifiedCount == 0)
             {
                 throw new Exception("User does not exist");
             }
-            else if (_users.Find(u => u.Email == newEmail).FirstOrDefault() != null)
+            else if (result.ModifiedCount > 1)
             {
-                throw new Exception("Email already exists");
+                throw new Exception("Multiple users found with the same email");
             }
-            else
-            {
-                try
-                {
-                    _users.UpdateOne(u => u.Email == user.Email, Builders<User>.Update.Set(u => u.Email, newEmail));
-                }
-                catch (Exception e)
-                {
-                    throw new Exception(e.Message);
-                }
-            }
-
-            return Task.FromResult(true);
         }
 
-        #region Admin methods
+            #region Admin methods
 
-        /// <summary>
-        /// Counts the amount of users in the database.
-        /// </summary>
-        /// <returns></returns>
-        public Task<long> GetUserCountAsync()
+            /// <summary>
+            /// Counts the amount of users in the database.
+            /// </summary>
+            /// <returns></returns>
+            public Task<long> GetUserCountAsync()
         {
             long userCount = 0;
 

@@ -230,33 +230,23 @@ app.MapGet("/api/user", async (IUserRepository iUserRepository, HttpContext cont
 
 app.MapPut("/api/user/email", async (IUserRepository iUserRepository, HttpContext context) =>
 {
-    if (context.User.Identity.IsAuthenticated)
+    var requestBody = await context.Request.ReadFromJsonAsync<ChangeEmailRequest>();
+
+    if (requestBody == null || string.IsNullOrEmpty(requestBody.CurrentEmail) || string.IsNullOrEmpty(requestBody.NewEmail))
     {
-        string? userEmail = context.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
-
-        // Read the request body and deserialize it into UserRequest
-        using (StreamReader? reader = new StreamReader(context.Request.Body))
-        {
-            string? requestBody = await reader.ReadToEndAsync();
-            UserRequest? userRequest = JsonConvert.DeserializeObject<UserRequest>(requestBody);
-
-            if (userRequest == null || string.IsNullOrEmpty(userRequest.Email))
-            {
-                return Results.BadRequest("Invalid or missing email in the request body.");
-            }
-
-            User? user = await iUserRepository.GetUser(new User { Email = userEmail });
-            await iUserRepository.ChangeEmailAddressAsync(user, userRequest.Email);
-
-            return Results.Ok("Email updated successfully");
-        }
+        return Results.BadRequest("Invalid request body");
     }
 
-    return Results.Unauthorized();
-}).RequireAuthorization(builder => builder.RequireAssertion(context =>
-{
-    return context.User.HasClaim("role", "user") || context.User.HasClaim("role", "admin");
-}));
+    try
+    {
+        await iUserRepository.ChangeEmailAddressAsync(requestBody.CurrentEmail, requestBody.NewEmail);
+        return Results.Ok("Email address updated successfully");
+    }
+    catch (Exception ex)
+    {
+        return Results.BadRequest(ex.Message);
+    }
+});
 
 app.MapPost("/api/partner", async (IUserRepository iUserRepository, HttpContext context, IMatchedBabyNamesRepository iMatchedBabyNamesRepository) =>
 {

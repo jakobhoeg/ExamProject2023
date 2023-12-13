@@ -7,4 +7,10 @@ namespace BackendAPIMongo.Model
         [EmailAddress(ErrorMessage = "Invalid email format")]
         public string Email { get; set; }
     }
+
+    public class ChangeEmailRequest
+    {
+        public string CurrentEmail { get; set; }
+        public string NewEmail { get; set; }
+    }
 }
