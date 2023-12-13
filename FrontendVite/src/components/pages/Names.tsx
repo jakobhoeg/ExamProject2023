@@ -20,7 +20,7 @@ export default function Names() {
   const { isLoggedIn } = useAuth();
   const [randomBabyName, setRandomBabyName] = useState<BabyName | null>(null);
 
-//#region Functions
+  //#region Functions
   useEffect(() => {
     const getUserInfo = async () => {
       try {
@@ -156,7 +156,7 @@ export default function Names() {
 
   //#endregion
 
-//#region Event handling
+  //#region Event handling
   const handlePageClick = (newIndex: number) => {
     setIndex(newIndex);
     window.history.pushState({}, "", `/navne?page=${newIndex}`);
@@ -242,8 +242,8 @@ export default function Names() {
     }
   };
   //#endregion
-  
-//#region HTML
+
+  //#region HTML
   return (
     <div className="flex flex-col w-screen pt-40 pb-20 justify-center items-center">
       <div className="flex flex-col justify-center items-center gap-8">
@@ -265,6 +265,7 @@ export default function Names() {
             Swipe Mode
           </button>
         </div>
+
         <div className="flex flex-col items-center justify-center w-[550px] gap-4">
           <div className="flex justify-center">
             <h2 className="text-2xl">Opsæt filter</h2>
@@ -277,17 +278,15 @@ export default function Names() {
               Mand
             </button>
             <button
-              className={`border-button ${
-                isFemaleFilter ? "bg-orange-200" : ""
-              }`}
+              className={`border-button ${isFemaleFilter ? "bg-orange-200" : ""
+                }`}
               onClick={() => handleFilterClick("female")}
             >
               Kvinde
             </button>
             <button
-              className={`border-button ${
-                isInternationalFilter ? "bg-orange-200" : ""
-              }`}
+              className={`border-button ${isInternationalFilter ? "bg-orange-200" : ""
+                }`}
               onClick={() => handleFilterClick("international")}
             >
               Internationalt
@@ -308,6 +307,17 @@ export default function Names() {
               </select>
             </div>
           )}
+          <div className="flex justify-center gap-4 pt-10 pb-10">
+            <label htmlFor="SearchLabel">Søg efter navn:</label>
+            <input
+              type="searchBox"
+              name="searchFunc"
+              className="inputs "
+            />
+            <button className="border-button">
+              Søg
+            </button>
+          </div>
 
           {/* List of names */}
           {isListViewMode && (
