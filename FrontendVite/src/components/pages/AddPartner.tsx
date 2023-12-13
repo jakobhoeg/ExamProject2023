@@ -19,7 +19,7 @@ export default function AddPartner() {
     e.preventDefault();
 
     try {
-      const response = await fetch("http://16.170.143.117:5000/api/partner", {
+      const response = await fetch("http://51.20.73.95:5000/api/partner", {
         method: "POST",
         credentials: "include",
         headers: {

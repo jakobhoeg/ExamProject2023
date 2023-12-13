@@ -81,7 +81,7 @@ namespace AdminClient.ViewModel.Pages
         {
             var authService = AuthenticationService.Instance;
 
-            var response = await authService._httpClient.GetAsync("http://16.170.143.117:5000/api/" + endpoint);
+            var response = await authService._httpClient.GetAsync("http://51.20.73.95:5000/api/" + endpoint);
             Debug.WriteLine(response);
             if (response.IsSuccessStatusCode)
             {
