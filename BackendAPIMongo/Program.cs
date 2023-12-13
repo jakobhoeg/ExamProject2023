@@ -240,13 +240,13 @@ app.MapPut("/api/user/email", async (IUserRepository iUserRepository, HttpContex
     try
     {
         await iUserRepository.ChangeEmailAddressAsync(requestBody.CurrentEmail, requestBody.NewEmail);
-        return Results.Ok("Email address updated successfully");
+        return Results.NoContent();
     }
     catch (Exception ex)
     {
         return Results.BadRequest(ex.Message);
     }
-});
+}).RequireAuthorization("admin");
 
 app.MapPost("/api/partner", async (IUserRepository iUserRepository, HttpContext context, IMatchedBabyNamesRepository iMatchedBabyNamesRepository) =>
 {

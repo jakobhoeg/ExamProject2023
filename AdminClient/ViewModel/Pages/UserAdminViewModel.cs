@@ -10,6 +10,8 @@ using System.Windows.Input;
 using AdminClient.Command;
 using Newtonsoft.Json;
 using Wpf.Ui.Input;
+using System.Diagnostics;
+using AdminClient.Services;
 
 namespace AdminClient.ViewModel.Pages
 {
@@ -18,6 +20,8 @@ namespace AdminClient.ViewModel.Pages
         private string _currentEmail;
         private string _newEmail;
         public ICommand ChangeEmailCommand { get; }
+
+        public string BaseURI = "http://51.20.73.95:5000/api";
 
 
         public string CurrentEmail
@@ -54,20 +58,34 @@ namespace AdminClient.ViewModel.Pages
 
         private async void ChangeEmail(object parameter)
         {
-            using (HttpClient client = new HttpClient())
+            try
             {
+                var authService = AuthenticationService.Instance;
                 var requestBody = new
                 {
-                    CurrentEmail = CurrentEmail,
-                    NewEmail = NewEmail
+                    currentEmail = CurrentEmail,
+                    newEmail = NewEmail
                 };
 
                 var json = JsonConvert.SerializeObject(requestBody);
                 var content = new StringContent(json, Encoding.UTF8, "application/json");
 
-                var response = await client.PutAsync("/api/user/email", content);
-                response.EnsureSuccessStatusCode();
+                var response = await authService._httpClient.PutAsync(BaseURI + "/user/email", content);
+                if (response.StatusCode == HttpStatusCode.OK) 
+                {
+                    Debug.WriteLine("Email was successfully changed!");
+                    response.EnsureSuccessStatusCode(); 
+                }
+                else
+                {
+                    Debug.WriteLine(response);
+                }
             }
+            catch (Exception ex)
+            {
+                throw;
+            }
+
         }
     }
 }
