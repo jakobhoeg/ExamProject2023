@@ -3,6 +3,7 @@ using BackendAPIMongo.Model;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.DependencyInjection;
 using System.Net.Http.Json;
+using NUnit.Framework;
 
 namespace NUnitTesting
 {
