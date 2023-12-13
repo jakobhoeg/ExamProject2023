@@ -9,6 +9,9 @@ interface Props {
   user: User | null;
   handleLikeClick: (babyName: BabyName) => void;
 }
+const formatLikes = (likes: number): string => {
+  return likes < 1000 ? likes.toString() : `${(likes / 1000).toFixed(1)}k`;
+};
 
 const NamesList: React.FC<Props> = ({ babyNames, user, handleLikeClick }) => {
   return (
@@ -36,10 +39,10 @@ const NamesList: React.FC<Props> = ({ babyNames, user, handleLikeClick }) => {
 
             <div className="flex items-center">
               {user &&
-              user.likedBabyNames &&
-              user.likedBabyNames.some(
-                (likedName) => likedName.id === babyName.id
-              ) ? (
+                user.likedBabyNames &&
+                user.likedBabyNames.some(
+                  (likedName) => likedName.id === babyName.id
+                ) ? (
                 <HeartFilledIcon
                   className="h-5 w-5 mr-1 text-rose-500 hover:text-rose-400 hover:cursor-pointer"
                   onClick={() => handleLikeClick(babyName)}
@@ -50,8 +53,7 @@ const NamesList: React.FC<Props> = ({ babyNames, user, handleLikeClick }) => {
                   onClick={() => handleLikeClick(babyName)}
                 />
               )}
-
-              <p className="text-lg mr-1">{babyName.amountOfLikes} Likes</p>
+              <p className="text-lg mr-1">{formatLikes(babyName.amountOfLikes)} Likes</p>
             </div>
           </div>
         ))}
