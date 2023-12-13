@@ -62,3 +62,4 @@ const NamesList: React.FC<Props> = ({ babyNames, user, handleLikeClick }) => {
 };
 
 export default NamesList;
+ 
