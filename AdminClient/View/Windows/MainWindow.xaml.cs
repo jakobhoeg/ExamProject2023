@@ -1,4 +1,5 @@
-﻿using AdminClient.View.Pages;
+﻿using AdminClient.Services;
+using AdminClient.View.Pages;
 using AdminClient.ViewModel.Pages;
 using System.Windows;
 using System.Windows.Media;
@@ -29,6 +30,8 @@ namespace AdminClient.View.Windows
 
             // Bind mouse click to btn
             userAdminBtn.PreviewMouseLeftButtonDown += UserAdmin_BtnClick;
+            homeBtn.PreviewMouseLeftButtonDown += Home_BtnClick;
+
         }
 
         private void OnSuccessfulLogin(object sender, EventArgs e)
@@ -45,6 +48,12 @@ namespace AdminClient.View.Windows
         {
             var userAdminView = new UserAdminView();
             pageContent.Content = userAdminView;
+        }
+
+        private void Home_BtnClick(object sender, RoutedEventArgs e)
+        {
+            var homeView = new HomeView();
+            pageContent.Content = homeView;
         }
     }
 }
