@@ -20,6 +20,9 @@
         <DataTemplate x:Key="HomeView" DataType="{x:Type viewPageModels:HomeViewModel}">
             <viewPages:HomeView />
         </DataTemplate>
+        <DataTemplate x:Key="UserAdminView" DataType="{x:Type viewPageModels:UserAdminViewModel}">
+            <viewPages:UserAdminView />
+        </DataTemplate>
     </Window.Resources>
 
 
@@ -37,6 +40,12 @@
                     <StackPanel Orientation="Vertical" HorizontalAlignment="Center" Height="52">
                         <ui:SymbolIcon FontSize="24" Symbol="Home48" />
                         <TextBlock Margin="10,0,10,0" FontSize="11" >Statistik</TextBlock>
+                    </StackPanel>
+                </ListViewItem>
+                <ListViewItem Name="userAdminBtn" Width="75" IsEnabled="False">
+                    <StackPanel Orientation="Vertical" HorizontalAlignment="Center" Height="52">
+                        <ui:SymbolIcon FontSize="24" Symbol="Home48" />
+                        <TextBlock Margin="10,0,10,0" FontSize="11" >Bruger Admin</TextBlock>
                     </StackPanel>
                 </ListViewItem>
             </ListView>
