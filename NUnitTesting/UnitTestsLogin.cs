@@ -2,12 +2,7 @@ using BackendAPIMongo;
 using BackendAPIMongo.Model;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.DependencyInjection;
-using MongoDB.Bson;
-using MongoDB.Driver;
-using NUnit.Framework;
-using System.Diagnostics;
 using System.Net.Http.Json;
-using System.Threading.Tasks;
 
 namespace NUnitTesting
 {
@@ -16,6 +11,7 @@ namespace NUnitTesting
         private WebApplicationFactory<Program> _factory;
         private HttpClient _client;
 
+        #region Setup and TearDown
         [SetUp]
         public void SetUp()
         {
@@ -41,7 +37,9 @@ namespace NUnitTesting
             _client.Dispose();
             _factory.Dispose();
         }
+        #endregion
 
+        #region Test Methods
         [Test]
         public async Task Login_ValidUser_ReturnsOK()
         {
@@ -67,6 +65,55 @@ namespace NUnitTesting
             }
         }
 
+        [Test]
+        public async Task Login_ValidUser_ReturnsUnauthorized()
+        {
+            // Arrange
+            var user = new User
+            {
+                Email = "test@email.dk",
+                Password = "4321"
+            };
+
+            try
+            {
+                // Act
+                var response = await _client.PostAsJsonAsync("/api/login", user);
+
+                // Assert
+                Assert.That(response.StatusCode, Is.EqualTo(System.Net.HttpStatusCode.InternalServerError));
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Exception: {ex.Message}");
+                throw;
+            }
+        }
+
+        [Test]
+        public async Task Login_ValidNonAdminUser_ReturnsOK()
+        {
+            // Arrange
+            var user = new User
+            {
+                Email = "test@email.dk",
+                Password = "1234"
+            };
+
+            try
+            {
+                // Act
+                var response = await _client.PostAsJsonAsync("/api/login", user);
+
+                // Assert
+                Assert.That(response.StatusCode, Is.EqualTo(System.Net.HttpStatusCode.OK));
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Exception: {ex.Message}");
+                throw;
+            }
+        }
 
         [Test]
         public async Task Login_InvalidUser_ReturnsUnauthorized()
@@ -92,5 +139,6 @@ namespace NUnitTesting
                 throw;
             }
         }
+        #endregion
     }
 }

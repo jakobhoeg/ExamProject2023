@@ -30,5 +30,13 @@
     "IsAdmin": true,
     "Partner": null,
     "LikedBabyNames": []
+  },
+  {
+    "Email": "test@email.dk",
+    "Password": "$2a$11$jcD9BqBkY9zQTJ5/t.69Hu./Enju0hLH3QthjkwjTtc6Y5wculgmC",
+    "FirstName": "Test",
+    "IsAdmin": false,
+    "Partner": null,
+    "LikedBabyNames": []
   }
 ]
