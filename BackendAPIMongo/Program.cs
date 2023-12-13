@@ -246,7 +246,7 @@ app.MapPut("/api/user/email", async (IUserRepository iUserRepository, HttpContex
     {
         return Results.BadRequest(ex.Message);
     }
-});
+}).RequireAuthorization("admin");
 
 app.MapPost("/api/partner", async (IUserRepository iUserRepository, HttpContext context, IMatchedBabyNamesRepository iMatchedBabyNamesRepository) =>
 {
