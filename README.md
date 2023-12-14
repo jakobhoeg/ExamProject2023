@@ -1,17 +1,8 @@
-# Run backend and start frontend:
+# Video preview of Frontend & Admin Client
 
-## Start backend
-To run the backend on docker open the ExamProject folder in CMD and type:
+## Frontend
+https://github.com/jakobhoeg/ExamProject2023/assets/114422072/5b6921f9-a6d4-4824-9448-528285abc2f6
 
-docker-compose up -d
+## Admin WPF Client
+https://github.com/jakobhoeg/ExamProject2023/assets/114422072/1d30c5a9-08c4-4e4c-aa43-6d5313743a7d
 
-## Now start the frontend development server
-- Open the "FrontendVite" folder in Visual Studio Code.
-- Now open a terminal (CTRL + Æ)
-- Type "npm run dev" (If that doesn't work, you might have to install dependencies first, by typing "npm install").
-- Go to http://localhost:5173
-
-For now its just a simple login + register that calls the backend.
-Also created the navigation bar.
-
-![image](https://github.com/jakobhoeg/ExamProject2023/assets/114422072/04161113-bf14-453c-b2ca-207c42e47490)
