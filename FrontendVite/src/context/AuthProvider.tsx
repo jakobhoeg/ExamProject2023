@@ -18,7 +18,7 @@ export const AuthProvider= ({ children }: { children: React.ReactNode }) => {
 
   const login = async (formData: LoginFormData) => {
     try {
-      const response = await fetch("http://51.20.73.95:5000/api/login", {
+      const response = await fetch("http://localhost:5000/api/login", {
         method: "POST",
         credentials: "include",
         headers: {
@@ -40,7 +40,7 @@ export const AuthProvider= ({ children }: { children: React.ReactNode }) => {
 
   const signOut = async () => {
     try {
-      const response = await fetch("http://51.20.73.95:5000/api/logout", {
+      const response = await fetch("http://localhost:5000/api/logout", {
         method: "POST",
         credentials: "include",
       });
@@ -61,7 +61,7 @@ export const AuthProvider= ({ children }: { children: React.ReactNode }) => {
   useEffect(() => {
     const checkLoginStatus = async () => {
       try {
-        const response = await fetch('http://51.20.73.95:5000/api/logged-in', {
+        const response = await fetch('http://localhost:5000/api/logged-in', {
           credentials: 'include', 
         });
 

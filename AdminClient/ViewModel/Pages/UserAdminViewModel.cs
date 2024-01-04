@@ -21,7 +21,7 @@ namespace AdminClient.ViewModel.Pages
         private string _newEmail;
         public ICommand ChangeEmailCommand { get; }
 
-        public string BaseURI = "http://51.20.73.95:5000/api";
+        public string BaseURI = "http://localhost:5000/api";
 
 
         public string CurrentEmail

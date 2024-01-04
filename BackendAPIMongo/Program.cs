@@ -10,7 +10,7 @@ using System.Security.Claims;
 using static System.Net.Mime.MediaTypeNames;
 
 var builder = WebApplication.CreateBuilder(args);
-var allowedOrigins = "http://localhost:5173";
+var allowedOrigins = "http://localhost:3000";
 var globalAllowedOrigins = "http://51.20.73.95:3000";
 
 builder.Services.AddEndpointsApiExplorer();
